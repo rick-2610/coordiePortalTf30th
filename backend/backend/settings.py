@@ -25,7 +25,11 @@ SECRET_KEY = 'django-insecure-fn5_xp&vh5*m0992hrk4(939rsghj6pc99$uql-rui25l4yb%z
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['http://13.223.126.6:8000']
+ALLOWED_HOSTS = [
+    '13.223.126.6',          # Your EC2 Public IPv4 address
+    '127.0.0.1',            # Localhost (needed for Nginx reverse proxy routing)
+    'localhost',
+]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
