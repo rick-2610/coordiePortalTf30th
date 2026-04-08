@@ -16,9 +16,12 @@ export default function HomePage({ onPlayerCreated }) {
 
         try {
             // API call to your Django backend to create the player
-            const response = await axios.post("/player/create/", {
-                name: name,
-            });
+            const response = await axios.post(
+                "http://13.223.126.6:8000/player/create/",
+                {
+                    name: name,
+                },
+            );
 
             // Call the function from App.js with the new player data
             onPlayerCreated(response.data);
