@@ -23,8 +23,8 @@ function App() {
   return (
       <Router>
         <div className='App'>
-          <Navbar />
-          {/* <NavTimer /> */}
+          {/* <Navbar /> */}
+          <NavTimer />
           <Routes>
             <Route path='/' element={<Home/>} />
             {/* <Route path='/departments' element={<Departments/>} />
