@@ -1,0 +1,241 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+.navbar {
+    height: 10vh;
+    width: 100vw;
+    /* Reduced background opacity and blur for better visibility of page below */
+    background-color: rgba(3, 19, 40, 0.4); 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    z-index: 50;
+}
+
+.logo {
+    height: 100%;
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 60;
+    cursor: pointer;
+}
+
+.logo img {
+    height: 60%;
+}
+
+#image1 {
+    margin-left: 1rem;
+    z-index: 20;
+}
+
+#image2 {
+    margin-left: -9px;
+    z-index: 20;
+    position: absolute;
+    left: 18px;
+    opacity: 0;
+}
+
+/* --- Locked State Modifiers --- */
+.lockedNav {
+    /* Fades the buttons, blurs them slightly, and removes clickability */
+    opacity: 0.35;
+    filter: blur(1.5px);
+    pointer-events: none;
+    user-select: none;
+}
+
+.lockedBtn {
+    opacity: 0.35;
+    pointer-events: none;
+}
+
+/* --- Standard Nav Styles (Restored) --- */
+.navoptions {
+    height: 100%;
+    width: 70%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    font-family: Montserrat;
+    font-weight: bolder;
+}
+
+.navoptions a {
+    text-decoration: none;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 15px;
+}
+
+.homebtn, .deptbtn, .testibtn {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.regbtn {
+    background-color: #1edbe2;
+    border-radius: 5px;
+    border: 2px solid transparent;
+}
+
+.regbtn a {
+    padding: 8px 15px;
+    color: #031328;
+    font-weight: 700;
+}
+
+.home, .dept, .testi, .reg {
+    font-size: 22px;
+}
+
+.line {
+    height: 2px;
+    width: 0px;
+    background-color: #1edbe2;
+    z-index: 20;
+    transition: width ease-in-out 0.3s;
+}
+
+.navbtn {
+    padding: 8px;
+    margin: 5px 20px 5px 5px;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: aliceblue;
+    visibility: hidden;
+    opacity: 0;
+    font-size: 24px;
+}
+
+/* --- Fancy Timer Styles --- */
+.timerWrapper {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto; /* Allows hover animations on the timer itself */
+    border-radius: 12px;
+    z-index: 55; /* Sits above the locked nav options */
+}
+
+.glassTimer {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 30px;
+    
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    border-left: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+    margin-top: 30px;
+    
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.glassTimer:hover {
+    transform: scale(1.05) translateY(-3px);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(30, 219, 226, 0.5);
+    box-shadow: 0 12px 40px 0 rgba(30, 219, 226, 0.3), inset 0 0 15px rgba(30, 219, 226, 0.1);
+}
+
+.timeBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Montserrat', sans-serif;
+    color: white;
+}
+
+.digits {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1edbe2;
+    text-shadow: 0 0 10px rgba(30, 219, 226, 0.4);
+    letter-spacing: 2px;
+}
+
+.glassTimer:hover .digits {
+    text-shadow: 0 0 15px rgba(30, 219, 226, 0.8);
+}
+
+.label {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #a0aab8;
+    margin-top: 2px;
+}
+
+.colon {
+    font-size: 24px;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 12px;
+    animation: blink 1s step-start infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+/* --- Media Queries --- */
+@media (max-width: 1024px) {
+    .navbtn {
+        visibility: hidden;
+        opacity: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbtn {
+        visibility: visible;
+        /* Opacity handled by .lockedBtn */
+    }
+    .navoptions {
+        display: none; /* Hide standard nav entirely on mobile when locked to prevent clutter */
+    }
+    .glassTimer {
+        padding: 8px 15px;
+        gap: 8px;
+    }
+    .digits { font-size: 18px; }
+    .label { font-size: 8px; }
+    .colon { font-size: 18px; margin-bottom: 10px; }
+}
+
+@media (max-width: 425px) {
+    #image2 { opacity: 1; }
+    #image1 { opacity: 0; }
+    
+    .glassTimer {
+        padding: 5px 10px;
+        gap: 5px;
+    }
+    
+    .digits { font-size: 16px; }
+    .colon { font-size: 16px; margin-bottom: 8px; }
+}
