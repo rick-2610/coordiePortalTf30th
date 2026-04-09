@@ -53,12 +53,21 @@ def live_update(request):
 
 @api_view(['POST'])
 def create_player(request):
-    # Creates a new player with a given name and a default score of 0.
-    serializer = PlayerScoreSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    name = request.data.get('name')
+    
+    if not name:
+        return Response({'error': 'Name is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    player, created = PlayerScore.objects.get_or_create(
+        name=name, 
+        defaults={'score': 0}
+    )
+    
+    serializer = PlayerScoreSerializer(player)
+    
+    status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
+    
+    return Response(serializer.data, status=status_code)
 
 @api_view(['PATCH'])
 def update_player_score(request, pk):

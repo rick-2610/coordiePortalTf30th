@@ -42,7 +42,7 @@ export default function HomePage({ onPlayerCreated }) {
                 fontFamily: "sans-serif",
             }}
         >
-            <h1>Flappy Bird</h1>
+            <h1>Flappy Spaceship</h1>
             <p>
                 Enter your roll no. of the form 25bXXXX to start playing and
                 save your score.
