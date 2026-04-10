@@ -374,9 +374,10 @@ export default function Home() {
                                 willChange: "opacity, transform",
                             }}
                         >
-                            <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-black leading-tight mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-indigo-500">
+                            <h1 className="text-lg sm:text-3xl md:text-4xl lg:text-5xl font-black leading-tight mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-indigo-500">
                                 Welcome to <br /> Techfest
                             </h1>
+
                             <p className="text-slate-400 max-w-lg text-sm sm:text-base md:text-lg mb-8">
                                 Techfest IIT Bombay is a transformative
                                 experience and Asia's largest science and tech
@@ -399,7 +400,7 @@ export default function Home() {
                                 opacity: heroOpacity,
                                 transform: `translateY(${heroYOffset * 1.1}px)`,
                                 willChange: "opacity, transform",
-                                minHeight: "300px", // Increased height
+                                minHeight: "380px", // Increased height
                             }}
                         >
                             {/* Replaced 'aspect-video' with hardcoded heights and aspect-ratio inline style to prevent 0px height collapse */}
