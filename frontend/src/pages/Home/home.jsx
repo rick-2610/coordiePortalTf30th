@@ -303,7 +303,7 @@ export default function Home() {
                 .holo-projector-base {
                   position: absolute;
                   bottom: -40px;
-                  left: 50%;
+                  left: 60%;
                   transform: translateX(-50%) rotateX(75deg);
                   width: 180px;
                   height: 180px;
@@ -399,13 +399,11 @@ export default function Home() {
                                 opacity: heroOpacity,
                                 transform: `translateY(${heroYOffset * 1.1}px)`,
                                 willChange: "opacity, transform",
+                                minHeight: "300px", // Increased height
                             }}
                         >
                             {/* Replaced 'aspect-video' with hardcoded heights and aspect-ratio inline style to prevent 0px height collapse */}
-                            <div
-                                className="holo-3d-tilt relative w-full h-48 sm:h-56 md:h-64 lg:h-72"
-                                style={{ aspectRatio: "16/9" }}
-                            >
+                            <div className="holo-3d-tilt relative w-full h-48 sm:h-56 md:h-64 lg:h-72">
                                 <div
                                     className={`absolute inset-0 rounded-xl border border-cyan-400/60 bg-cyan-950/80 overflow-hidden ${isHoloFlickering ? "holo-flicker-anim" : "holo-idle-float"}`}
                                 >

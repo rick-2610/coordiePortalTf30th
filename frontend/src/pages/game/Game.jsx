@@ -73,7 +73,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                             const newPipe = { ...pipe };
 
                             if (
-                                newPipe.left + PIPE_WIDTH < GAME_WIDTH / 2 &&
+                                newPipe.left + PIPE_WIDTH < GAME_WIDTH / 3 &&
                                 !newPipe.passed
                             ) {
                                 newScore++;
@@ -137,7 +137,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
     useEffect(() => {
         if (!isGameStarted || isGameOver) return;
 
-        if (birdPosition > GAME_HEIGHT - BIRD_SIZE) {
+        if (birdPosition >= GAME_HEIGHT - BIRD_SIZE) {
             handleGameOver();
             return;
         }
@@ -188,7 +188,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                 if (next > GAME_HEIGHT - BIRD_SIZE) {
                     next = GAME_HEIGHT - BIRD_SIZE;
                     velocityRef.current = 0;
-                    handleGameOver();
+                    // handleGameOver();
                 }
 
                 return next;
