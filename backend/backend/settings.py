@@ -39,6 +39,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://13.223.126.6"
 ]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://coordie.techfest.org",
+]
+
 
 
 # Application definition
