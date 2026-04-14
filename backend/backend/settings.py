@@ -28,7 +28,6 @@ DEBUG = False
 ALLOWED_HOSTS = [
     'coordie.techfest.org',
     '13.223.126.6',
-    '13.223.126.6:8000',
     '127.0.0.1', 
     'localhost',
 ]
@@ -149,3 +148,6 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+USE_X_FORWARDED_HOST = True
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
