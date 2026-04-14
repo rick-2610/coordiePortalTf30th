@@ -34,7 +34,7 @@ ALLOWED_HOSTS = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://coordie.techfest.org"
+    "https://coordie.techfest.org",
     "http://localhost:3000",
     "http://13.223.126.6"
 ]
