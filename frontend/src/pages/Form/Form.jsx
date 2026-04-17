@@ -368,7 +368,7 @@ export default function App() {
 
         try {
             const response = await fetch(
-                "https://coordie.techfest.org/player/create_coordi/",
+                "https://coordi.techfest.org/player/create_coordi/",
                 {
                     method: "POST",
                     headers: {

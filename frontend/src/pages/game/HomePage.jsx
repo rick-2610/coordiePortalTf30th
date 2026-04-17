@@ -17,7 +17,7 @@ export default function HomePage({ onPlayerCreated }) {
         try {
             // API call to your Django backend to create the player
             const response = await axios.post(
-                "https://coordie.techfest.org/player/create/",
+                "https://coordi.techfest.org/player/create/",
                 {
                     name: name,
                 },

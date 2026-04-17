@@ -47,7 +47,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
             try {
                 // Adjust this URL if your Django server is running on a different port/host
                 const response = await axios.get(
-                    "https://coordie.techfest.org/player/scores/global-top/",
+                    "https://coordi.techfest.org/player/scores/global-top/",
                 );
                 setGlobalTopScore(response.data.top_score);
                 console.log(response.data.top_score);
