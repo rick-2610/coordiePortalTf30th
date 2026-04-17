@@ -25,6 +25,7 @@ import ozone from "./assets/ozone.jpeg";
 import marki from "./assets/marki.jpeg";
 import hospi from "./assets/hospi.jpeg";
 import mnp from "./assets/mnp.jpeg";
+import fnb from "./assets/fnb.jpeg";
 
 import image1 from "./assets/image1.jpeg";
 import image2 from "./assets/image2.jpeg";
@@ -231,7 +232,7 @@ Build the fest. Power the thrill. Join Infra.`,
         department: "Robowars",
         image: robowars,
         content:
-            "International Robowars is India’s largest and most intense combat robotics event, where top teams from around the world build powerful robots and battle for the championship title. With 25+ international teams, global anchors and a roaring audience of 7000+, the arena comes alive as machines clash in a raw display of skill, strategy and destruction.",
+            "International Robowars is India’s largest and most intense combat robotics event, where top teams from around the world build powerful robots and battle for the championship title. With 25+ international teams, global anchors and a roaring audience of 8000+, the arena comes alive as machines clash in a raw display of skill, strategy and destruction.",
     },
     {
         id: 12,
