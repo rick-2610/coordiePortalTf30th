@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import PlayerScore
+from .models import PlayerScore, Coordinators
 from .serializers import *
 from rest_framework import status
 
@@ -104,3 +104,20 @@ def global_top_score(request):
     top_player = PlayerScore.objects.all().order_by('-score').first()
     top_score_value = top_player.score if top_player else 0
     return Response({'top_score': top_score_value}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+def create_coordinator(request):
+    data = request.data
+
+    try:
+        coordinator = Coordinators.objects.create(
+            name=data.get('name'),
+            roll_no=data.get('roll_no'),
+            contact_no=data.get('contact_no'),
+            verticals=data.get('verticals', [])
+        )
+        return Response({"message": "Coordinator created"}, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
