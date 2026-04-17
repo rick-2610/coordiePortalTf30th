@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import axios from "axios";
 
+axios.defaults.xsrfCookieName = "csrftoken";
+axios.defaults.xsrfHeaderName = "X-CSRFToken";
+// 2. Ensure Axios sends cookies with cross-origin requests
+axios.defaults.withCredentials = true;
+
 // The 'onPlayerCreated' prop is a function passed down from App.js
 export default function HomePage({ onPlayerCreated }) {
     const [name, setName] = useState("");
