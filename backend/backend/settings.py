@@ -26,20 +26,20 @@ SECRET_KEY = 'django-insecure-fn5_xp&vh5*m0992hrk4(939rsghj6pc99$uql-rui25l4yb%z
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    'coordie.techfest.org',
+    'coordi.techfest.org',
     '13.223.126.6',
     '127.0.0.1', 
     'localhost',
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://coordie.techfest.org",
+    "https://coordi.techfest.org",
     "http://localhost:3000",
     "http://13.223.126.6"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://coordie.techfest.org",
+    "https://coordi.techfest.org",
 ]
 
 
