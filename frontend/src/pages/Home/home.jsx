@@ -24,6 +24,7 @@ import techx from "./assets/techx.jpeg";
 import ozone from "./assets/ozone.jpeg";
 import marki from "./assets/marki.jpeg";
 import hospi from "./assets/hospi.jpeg";
+import mnp from "./assets/mnp.jpeg";
 
 import image1 from "./assets/image1.jpeg";
 import image2 from "./assets/image2.jpeg";
@@ -207,7 +208,7 @@ Build the fest. Power the thrill. Join Infra.`,
     {
         id: 8,
         department: "Media n Publicity",
-        image: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=600&q=80",
+        image: mnp,
         content:
             "Techfest attracts a massive 180 K+ footfall every year, and a major reason behind this reach is its strong Media and Publicity team. From building hype to ensuring Techfest reaches every corner, this department shapes how the festival is seen and remembered. If you’re interested in public outreach, design, video editing, content creation, and execution, this is the place to learn it all. The iconic Techfest aftermovie and managing an Instagram page with 120k+ followers are also handled by this team. If you want creativity, visibility, and real impact, Media and Publicity is for you.",
     },
