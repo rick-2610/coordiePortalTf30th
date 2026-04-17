@@ -106,7 +106,6 @@ const globalStyles = `
     display: flex;
     align-items: center;
     justify-content: center;
-    pointer-events: none;
     padding: 0 1rem;
   }
   .success-box {
@@ -466,9 +465,22 @@ export default function App() {
                                     <br />
                                     Complete
                                 </h1>
+
                                 <p className="success-subtitle">
                                     Welcome Aboard, Explorer.
                                 </p>
+                                <br />
+                                <a
+                                    href="https://chat.whatsapp.com/DEPsaKZsZopGgowUYhDHqF?mode=gi_t"
+                                    target="_blank"
+                                    style={{
+                                        fontSize: "1.3rem",
+                                        color: "#1edbe2",
+                                        fontWeight: "bold",
+                                    }}
+                                >
+                                    Join the whatsapp group
+                                </a>
                             </div>
                         </motion.div>
                     )}
