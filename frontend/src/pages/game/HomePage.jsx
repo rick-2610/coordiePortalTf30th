@@ -17,7 +17,7 @@ export default function HomePage({ onPlayerCreated }) {
         try {
             // API call to your Django backend to create the player
             const response = await axios.post(
-                "http://13.223.126.6:8000/player/create/",
+                "https://coordie.techfest.org/player/create/",
                 {
                     name: name,
                 },
@@ -59,6 +59,7 @@ export default function HomePage({ onPlayerCreated }) {
                         marginRight: "10px",
                         borderRadius: "4px",
                         border: "1px solid #ccc",
+                        color: "black",
                     }}
                 />
                 <button

@@ -47,10 +47,10 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
             try {
                 // Adjust this URL if your Django server is running on a different port/host
                 const response = await axios.get(
-                    "http://13.223.126.6:8000/player/scores/global-top/",
+                    "https://coordie.techfest.org/player/scores/global-top/",
                 );
-                // Axios automatically parses JSON and places the payload in the `data` property
                 setGlobalTopScore(response.data.top_score);
+                console.log(response.data.top_score);
             } catch (error) {
                 console.error("Failed to fetch global top score:", error);
             }

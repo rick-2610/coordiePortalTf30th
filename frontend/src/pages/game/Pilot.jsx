@@ -37,7 +37,7 @@ export default function Pilot() {
         if (player) {
             try {
                 const response = await axios.patch(
-                    `http://13.223.126.6:8000/player/${player.id}/update_score/`,
+                    `https://coordie.techfest.org/player/${player.id}/update_score/`,
                     {
                         score: finalScore,
                     },

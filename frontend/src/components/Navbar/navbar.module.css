@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
 
+/* --- GLOBAL & DESKTOP STYLES --- */
 .navbar {
     height: 10vh;
     width: 100vw;
@@ -12,32 +13,47 @@
     display: flex;
     justify-content: space-between;
     position: fixed;
-    z-index: 20;
+    z-index: 100;
 }
-.logo{
+
+.logo {
     height: 100%;
     width: 20%;
     display: flex;
     justify-content: center;
     align-items: center;
     color: white;
+    position: relative;
 }
 
-.logo img{
+.logo img {
     height: 60%;
-
 }
 
-.navoptions{
+#image1 {
+    margin-left: 1rem;
+    z-index: 100;
+    transition: opacity 0.3s ease;
+}
+
+#image2 {
+    margin-left: -9px;
+    z-index: 100;
+    position: absolute;
+    left: 18px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.navoptions {
     height: 100%;
     width: 70%;
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    font-family: Montserrat;
+    font-family: 'Montserrat', sans-serif;
     font-weight: bolder;
 }
-
 
 .navoptions a {
     text-decoration: none;
@@ -48,78 +64,64 @@
     font-size: 15px;
 }
 
-.homebtn, .deptbtn, .testibtn{
+.homebtn, .deptbtn, .testibtn {
     display: flex;
     flex-direction: column;
     gap: 3px;
-
+    cursor: pointer;
 }
-/* Replace your existing .regbtn, .regbtn a, and .regbtn:hover blocks with this: */
 
+.home, .dept, .testi, .reg {
+    font-size: 22px;
+    transition: color 0.3s ease-in-out;
+}
+
+.line {
+    height: 2px;
+    width: 0px;
+    background-color: #1edbe2;
+    z-index: 100; 
+    transition: width ease-in-out 0.3s;
+}
+
+/* Hover effects (Flattened for native CSS compatibility) */
+.homebtn:hover .home, 
+.testibtn:hover .testi, 
+.deptbtn:hover .dept {
+    color: #1edbe2;
+}
+
+.homebtn:hover .line, 
+.testibtn:hover .line, 
+.deptbtn:hover .line {
+    width: 100%;
+}
+
+/* Register Button Styles */
 .regbtn {
     background-color: #1edbe2;
     border-radius: 5px;
-    /* Add a transparent border so adding a colored one on hover doesn't shift layout */
     border: 2px solid transparent; 
-    /* Smooth out all changes (color, scale, background) */
     transition: all 0.3s ease-in-out; 
 }
 
 .regbtn a {
-    padding: 8px 15px; /* Slightly widened padding for a better button shape */
-    color: #031328; /* High contrast text color */
+    padding: 8px 15px; 
+    color: #031328; 
     font-weight: 700;
     transition: color 0.3s ease-in-out;
 }
 
 .regbtn:hover {
-    transform: translateY(-2px) scale(1.05); /* Slight lift and scale */
-    background-color: transparent; /* Creates a hollow "ghost" button effect */
+    transform: translateY(-2px) scale(1.05); 
+    background-color: #031328; /* Fills with dark color on hover */
     border: 2px solid #1edbe2;
     box-shadow: 0 4px 15px rgba(30, 219, 226, 0.4); 
 }
 
-/* Ensure the text color changes smoothly when the button is hovered */
 .regbtn:hover .reg {
     color: #1edbe2; 
 }
-.home, .dept, .testi, .reg{
-    font-size: 22px;
-}
-
-.line{
-    height: 2px;
-    width: 0px;
-    background-color: #1edbe2;
-    z-index: 20; 
-    transition: width ease-in-out 0.3s;
-}
-
-.homebtn:hover, .testibtn:hover, .deptbtn:hover{
-    .home, .testi, .dept, .reg{
-        color: #1edbe2;
-    }
-    .line{
-        width: 100%;
-    }
-}
-
-.regbtn{
-    background-color: #1edbe2;
-    border-radius: 5px;
-
-}
-
-.regbtn:hover{
-    .reg{
-        color: aliceblue;
-    }
-    transform: scale(1.1);
-    background-color: #031328;
-    border: 2px solid #1edbe2;
-}
-
-
 
 .navbtn {
     padding: 8px 8px 5px 8px;
@@ -132,64 +134,49 @@
     visibility: hidden;
     opacity: 0;
     overflow: hidden;
+    font-size: 1.5rem; /* Ensures the react-icon is a good size */
 }
 
-.logo {
-    position: relative;
-}
 
-#image1 {
-    margin-left: 1rem;
-    z-index: 20;
-}
-#image2 {
-    margin-left: -9px;
-    z-index: 20;
-    position: absolute;
-    left: 18px;
-    opacity: 0;
-}
-
-@media (max-width: 425px) {
-    #image2 {opacity: 1;}
-    #image1 {opacity: 0;}
-}
+/* --- MOBILE QUERIES --- */
 
 @media only screen and (max-width: 1024px) {
     .navbtn {
         visibility: hidden;
         opacity: 0;
     }
-    
-    
 }
+
 @media only screen and (max-width: 768px) {
     .navbtn {
         visibility: visible;
         opacity: 1;
+        margin-right: 1.5rem; /* Keep button away from the strict edge */
     }
+    
     .navoptions {
         position: fixed;
         top: 0;
         right: 0;
-        height: 50%;
-        width: 50%;
+        height: 100vh; /* Changed from 50% to full height */
+        width: 60%; /* Menu takes up 60% of the screen */
         display: flex;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 1.5rem;
-        background-color: #031328;
-        transition: 1s;
-        transform: translatex(100vh);
-        
+        gap: 2rem; /* Spaced out items for easier tapping */
+        background-color: #031328; /* Solid color to hide background content */
+        transition: transform 0.4s ease-in-out; /* Smoother, faster transition */
+        transform: translateX(100%); /* Hides menu perfectly off-screen */
+        z-index: 1000; /* Ensures it sits over everything */
     }
     
+    /* Class toggled via React useRef */
     .responsive_nav {
-        transform: none;
+        transform: translateX(0);
     }
 
-    .navclosebtn{
+    .navclosebtn {
         position: absolute;
         top: 2rem;
         right: 2rem;
@@ -197,6 +184,18 @@
 
     .logo {
         margin-left: 1rem;
-        width: 50%
+        width: 50%;
+    }
+}
+
+@media (max-width: 425px) {
+    #image2 {
+        opacity: 1;
+    }
+    #image1 {
+        opacity: 0;
+    }
+    .navoptions {
+        width: 100%; /* Makes menu full width on very small screens */
     }
 }

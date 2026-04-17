@@ -20,7 +20,7 @@ const Navbar = () => {
     //   }
     //   else{
     //     setBurgerClass("burger-class unclicked");
-    //     setMenuClass("menu hidden");
+    //     setMenuClass("menu hidden"); https://docs.google.com/forms/d/e/1FAIpQLSdVe12ycF4e3YMwWttzOa29fjhhW_5rez1FfrQfUBMtgUYGnQ/viewform
     //   }
 
     // }
@@ -55,23 +55,20 @@ const Navbar = () => {
                     </a>
                     <div className={styles.line}></div>
                 </div>
-                <div className={styles.deptbtn}>
-                    <a href="/departments" className={styles.dept}>
+                {/* <div className={styles.deptbtn}>
+                    <a href="/verticals" className={styles.dept}>
                         DEPARTMENTS
                     </a>
                     <div className={styles.line}></div>
-                </div>
+                </div> */}
                 <div className={styles.deptbtn}>
                     <a href="/game" className={styles.dept}>
-                        FUN GAME
+                        FLAPPY GAME
                     </a>
                     <div className={styles.line}></div>
                 </div>
                 <div className={styles.regbtn}>
-                    <a
-                        href="https://docs.google.com/forms/d/e/1FAIpQLSdVe12ycF4e3YMwWttzOa29fjhhW_5rez1FfrQfUBMtgUYGnQ/viewform"
-                        className={styles.reg}
-                    >
+                    <a href="/form" className={styles.reg}>
                         REGISTER
                     </a>
                     <div className={styles.line}></div>

@@ -4,10 +4,11 @@ import './App.css';
 import Home from './pages/Home/home';
 import Navbar from './components/Navbar/navbar';
 import NavTimer from './components/Navbar/navtimer';
-// import Departments from './pages/departments/departments';
+import Verticals from './pages/Verticals/Verticals';
 // import Testimonials from './pages/testimonials/testimonials';
 // import Loading from './pages/loading/loading';
 import Game from './pages/game/Pilot'
+import Form from './pages/Form/Form';
 import Timer from './pages/Timer/timer'
 
 function App() {
@@ -22,14 +23,15 @@ function App() {
   return (
       <Router>
         <div className='App'>
-          {/* <Navbar /> */}
-          <NavTimer />
+          <Navbar />
+          {/* <NavTimer /> */}
           <Routes>
             <Route path='/' element={<Home/>} />
             {/* <Route path='/departments' element={<Departments/>} />
             <Route path='/testimonials' element={<Testimonials/>} /> */}
             <Route path='/game' element={<Game/>} />
-            <Route path='/timer' element={<Timer/>} />
+            <Route path='/verticals' element={<Verticals/>} />
+            <Route path='/form' element={<Form/>} />
           </Routes>
           {/* <Footer /> */}
         </div>
