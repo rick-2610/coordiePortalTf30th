@@ -17,6 +17,19 @@ const OBSTACLE_SPEED = 2;
 const OBSTACLE_RANGE = 50;
 
 const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 480);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    const GAME_SPAWN_WIDTH = !isMobile ? GAME_WIDTH / 2 : GAME_WIDTH / 2;
+    const LEFT = !isMobile ? 6.5 : 2.6;
+
     const [birdPosition, setBirdPosition] = useState(GAME_HEIGHT / 2);
     const [pipes, setPipes] = useState([]);
     const [score, setScore] = useState(0);
@@ -73,7 +86,8 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                             const newPipe = { ...pipe };
 
                             if (
-                                newPipe.left + PIPE_WIDTH < GAME_WIDTH / 3 &&
+                                newPipe.left + PIPE_WIDTH <
+                                    GAME_SPAWN_WIDTH / 3 &&
                                 !newPipe.passed
                             ) {
                                 newScore++;
@@ -91,7 +105,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                                 }
                             }
 
-                            newPipe.left -= 3.5;
+                            newPipe.left -= LEFT;
                             return newPipe;
                         })
                         .filter((pipe) => pipe.left > -PIPE_WIDTH);
@@ -147,8 +161,8 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
             const bottomPipeTop =
                 GAME_HEIGHT - pipe.bottomPipeHeight + pipe.verticalShift;
             const birdIsAtPipeX =
-                pipe.left < GAME_WIDTH / 3 + BIRD_SIZE &&
-                pipe.left + PIPE_WIDTH > GAME_WIDTH / 3;
+                pipe.left < GAME_SPAWN_WIDTH / 3 + BIRD_SIZE &&
+                pipe.left + PIPE_WIDTH > GAME_SPAWN_WIDTH / 3;
             const birdHitsTopPipe = birdPosition < topPipeBottom;
             const birdHitsBottomPipe = birdPosition + BIRD_SIZE > bottomPipeTop;
             if (birdIsAtPipeX && (birdHitsTopPipe || birdHitsBottomPipe)) {
@@ -287,7 +301,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                 className="bird"
                 style={{
                     top: `${birdPosition}px`,
-                    left: `${GAME_WIDTH / 3}px`,
+                    left: `${GAME_SPAWN_WIDTH / 3}px`,
                 }}
             />
 
