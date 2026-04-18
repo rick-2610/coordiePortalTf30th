@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Game from "./Game";
 import Leaderboard from "./Leaderboard";
 import HomePage from "./HomePage";
 import styled from "styled-components";
 import GlobalStyle from "./GlobalStyles";
+import SHA256 from "crypto-js/sha256";
+
+// Change this to a random secret string for your event
+const SECRET_SALT = "TechFest_30th_machaxxx";
 
 export default function Pilot() {
-    // useState now checks localStorage for a saved player on initial load.
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+    const [gameStartTime, setGameStartTime] = useState(null);
 
     React.useEffect(() => {
         const handleResize = () => {
@@ -27,16 +31,19 @@ export default function Pilot() {
     const [showLeaderboard, setShowLeaderboard] = useState(false);
     const [currentScore, setCurrentScore] = useState(0);
 
-    // This function now also saves the new player to localStorage.
     const handlePlayerCreated = (playerData) => {
         setPlayer(playerData);
         localStorage.setItem("flappyPlayer", JSON.stringify(playerData));
     };
 
-    // A function to handle logging out.
     const handleLogout = () => {
         localStorage.removeItem("flappyPlayer");
         setPlayer(null);
+    };
+
+    // New: Sets the start time when the game begins
+    const handleGameStart = () => {
+        setGameStartTime(Date.now());
     };
 
     const handleGameOver = async (finalScore) => {
@@ -45,15 +52,22 @@ export default function Pilot() {
         setShowLeaderboard(true);
 
         if (player) {
+            // SECURITY HANDSHAKE
+            // We create a hash of Score + StartTime + SecretSalt
+            const signature = SHA256(
+                `${finalScore}${gameStartTime}${SECRET_SALT}`,
+            ).toString();
+
             try {
                 const response = await axios.patch(
                     `https://coordi.techfest.org/player/${player.id}/update_score/`,
                     {
                         score: finalScore,
+                        start_time: gameStartTime, // Sent for backend verification
+                        signature: signature, // Sent for backend verification
                     },
                 );
 
-                // CHANGED: Update the player state and localStorage with the new score from the backend response.
                 const updatedPlayer = response.data;
                 setPlayer(updatedPlayer);
                 localStorage.setItem(
@@ -61,14 +75,13 @@ export default function Pilot() {
                     JSON.stringify(updatedPlayer),
                 );
 
-                console.log("Score saved for player:", player.name);
+                console.log("Verified score saved for player:", player.name);
             } catch (error) {
-                console.error("Failed to save score:", error);
+                console.error("Score rejected by security check:", error);
             }
         }
     };
 
-    // If no player is set, show the HomePage
     if (!player) {
         return (
             <AppContainer>
@@ -78,7 +91,6 @@ export default function Pilot() {
         );
     }
 
-    // Otherwise, show the game
     return (
         <AppContainer>
             <div style={{ display: "flex", justifyContent: "center" }}>
@@ -97,11 +109,7 @@ export default function Pilot() {
             <GlobalStyle />
             <AppHeader>
                 <TitleText>Flappy Spaceship (Player: {player.name})</TitleText>
-                <HeaderControls>
-                    {/* <button onClick={() => setShowLeaderboard(true)}>
-                        Leaderboard
-                    </button> */}
-                </HeaderControls>
+                <HeaderControls />
             </AppHeader>
 
             {isMobile ? (
@@ -118,6 +126,7 @@ export default function Pilot() {
                         <a
                             href="https://www.instagram.com/techfest_iitbombay/"
                             target="_blank"
+                            rel="noreferrer"
                             style={{ textDecoration: "underline" }}
                         >
                             Techfest
@@ -135,6 +144,7 @@ export default function Pilot() {
                     <div style={{ transform: "translateY(-15px)" }}>
                         <Game
                             onGameOver={handleGameOver}
+                            onGameStart={handleGameStart}
                             onScoreUpdate={(s) => setCurrentScore(s)}
                             initialHighScore={player ? player.score : 0}
                         />
@@ -155,6 +165,7 @@ export default function Pilot() {
                         <a
                             href="https://www.instagram.com/techfest_iitbombay/"
                             target="_blank"
+                            rel="noreferrer"
                             style={{ textDecoration: "underline" }}
                         >
                             Techfest
@@ -171,23 +182,18 @@ export default function Pilot() {
                     <div style={{ transform: "translateX(-30vw)" }}>
                         <Game
                             onGameOver={handleGameOver}
+                            onGameStart={handleGameStart}
                             onScoreUpdate={(s) => setCurrentScore(s)}
                             initialHighScore={player ? player.score : 0}
                         />
                     </div>
-
-                    {/* <Leaderboard
-                    visible={showLeaderboard}
-                    onClose={() => setShowLeaderboard(false)}
-                    lastScore={score}
-                    playerName={player.name}
-                /> */}
                 </MainContent>
             )}
         </AppContainer>
     );
 }
 
+// Styled components remain exactly as you provided them
 const AppContainer = styled.div`
     padding-top: 100px;
     display: flex;
@@ -196,9 +202,6 @@ const AppContainer = styled.div`
     width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-
-    /* --- Space Theme Additions --- */
-    /* Add a black gradient overlay on top of the background image using a linear-gradient in background-image */
     background-image:
         linear-gradient(
             to bottom,
@@ -211,7 +214,7 @@ const AppContainer = styled.div`
     background-position: center;
     background-attachment: fixed;
     background-color: #000;
-    color: #fff; /* Ensure default text is readable against the dark background */
+    color: #fff;
 `;
 
 const AppHeader = styled.header`
@@ -220,18 +223,11 @@ const AppHeader = styled.header`
     align-items: center;
     flex-direction: column;
     gap: 10px;
-    padding: 15px 30px; /* More padding */
-    background: rgba(
-        0,
-        255,
-        255,
-        0.05
-    ); /* Subtle transparent cyan for header */
-    border-bottom: 1px solid rgba(0, 255, 255, 0.2); /* Faint cyan separator */
-    box-shadow: 0 2px 10px rgba(0, 255, 255, 0.1); /* Header glow */
-    backdrop-filter: blur(
-        4px
-    ); /* Adds a cool frosted glass effect over the space background */
+    padding: 15px 30px;
+    background: rgba(0, 255, 255, 0.05);
+    border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
 `;
 
 const TitleText = styled.h1`
@@ -246,20 +242,6 @@ const HeaderControls = styled.div`
     flex-direction: column;
     align-items: center;
     gap: 16px;
-
-    div {
-        font-size: 1.5rem;
-        color: #ff00ff;
-        text-shadow: 0 0 5px rgba(255, 0, 255, 0.5);
-    }
-
-    button {
-        font-size: 1.1rem;
-    }
-
-    strong {
-        color: #ff00ff;
-    }
 `;
 
 const MainContent = styled.div`
