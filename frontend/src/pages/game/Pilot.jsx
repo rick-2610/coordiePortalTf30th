@@ -145,7 +145,7 @@ export default function Pilot() {
                         style={{
                             fontWeight: "bold",
                             borderRadius: "18px",
-                            color: "yellow",
+                            color: "#EFBF02",
                             textAlign: "left",
                             marginLeft: "10vw",
                         }}
