@@ -910,25 +910,40 @@ export default function Home() {
             <div ref={earthYTRef} className="relative z-10 h-[200vh]">
                 <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center">
                     <motion.div
-                        className="absolute inset-0 flex flex-col items-center justify-center px-6 md:px-24 z-0 pointer-events-auto"
+                        className="absolute inset-0 flex flex-col items-center justify-center px-4 md:px-24 z-0 pointer-events-auto"
                         style={{ opacity: ytOpacity, scale: ytScale, y: ytY }}
                     >
-                        <div className="w-full max-w-5xl aspect-video rounded-2xl overflow-hidden glass-panel border border-indigo-500/20 shadow-[0_0_50px_rgba(99,102,241,0.15)] relative z-30">
-                            <iframe
-                                className="w-full h-full absolute inset-0"
-                                src="https://www.youtube.com/embed/0_FBwJi8VBo"
-                                title="YouTube video player"
-                                frameBorder="0"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                allowFullScreen
-                            ></iframe>
-                        </div>
+                        {/* 1. Added [perspective:1200px] to the parent to enable 3D space 
+      2. Removed overflow-hidden here so the 3D corners don't get clipped 
+    */}
+                        <div className="w-full max-w-5xl [perspective:3200px] relative z-30">
+                            {/* flex-col for mobile (stacked), md:flex-row for desktop (side-by-side) */}
+                            <div className="flex flex-col md:flex-row w-full gap-6 md:gap-10 items-center justify-center">
+                                {/* Left Video (Desktop) / Top Video (Mobile) */}
+                                <div className="w-full md:w-1/2 aspect-video rounded-2xl overflow-hidden glass-panel border border-indigo-500/20 shadow-[0_0_50px_rgba(99,102,241,0.15)] transition-transform duration-500 [transform:rotateX(10deg)] md:[transform:rotateY(15deg)_rotateX(0deg)] hover:[transform:rotateX(0deg)_rotateY(0deg)] relative">
+                                    <iframe
+                                        className="w-full h-full absolute inset-0"
+                                        src="https://www.youtube.com/embed/0_FBwJi8VBo"
+                                        title="YouTube video player 1"
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowFullScreen
+                                    ></iframe>
+                                </div>
 
-                        {/* <div className="mt-8 text-center relative z-30">
-                            <p className="text-slate-400 mt-2 max-w-2xl mx-auto">
-                                Experience the highlights
-                            </p>
-                        </div> */}
+                                {/* Right Video (Desktop) / Bottom Video (Mobile) */}
+                                <div className="w-full md:w-1/2 aspect-video rounded-2xl overflow-hidden glass-panel border border-indigo-500/20 shadow-[0_0_50px_rgba(99,102,241,0.15)] transition-transform duration-500 [transform:rotateX(-10deg)] md:[transform:rotateY(-15deg)_rotateX(0deg)] hover:[transform:rotateX(0deg)_rotateY(0deg)] relative">
+                                    <iframe
+                                        className="w-full h-full absolute inset-0"
+                                        src="https://www.youtube.com/embed/Ml_fnnOmF0Q"
+                                        title="YouTube video player 2"
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowFullScreen
+                                    ></iframe>
+                                </div>
+                            </div>
+                        </div>
                     </motion.div>
 
                     <motion.img
