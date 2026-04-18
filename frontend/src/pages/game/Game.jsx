@@ -3,18 +3,18 @@ import axios from "axios";
 import "./Game.css";
 import spaceship from "./assets/spaceship.png";
 
-// Game constants
-const BIRD_SIZE = 35;
+// Game constants (Adjusted for Easy Mode)
+const BIRD_SIZE = 35; // Slightly smaller hitbox
 const GAME_WIDTH = 400;
 const GAME_HEIGHT = 400;
 const GRAVITY = 0.5;
-const JUMP_VELOCITY = -7;
+const JUMP_VELOCITY = -6;
 const JUMP_HEIGHT = 72;
 const PIPE_EXTRA_HEIGHT = 300;
 const PIPE_WIDTH = 60;
 const PIPE_GAP = 140;
-const OBSTACLE_SPEED = 2;
-const OBSTACLE_RANGE = 50;
+const OBSTACLE_SPEED = 1; // Slower moving pipes
+const OBSTACLE_RANGE = 30; // Moving pipes don't travel as far
 
 const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
@@ -27,8 +27,10 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
+    const TIME = !isMobile ? 1100 : 2000;
+
     const GAME_SPAWN_WIDTH = !isMobile ? GAME_WIDTH / 2 : GAME_WIDTH / 2;
-    const LEFT = !isMobile ? 6.5 : 2.6;
+    const LEFT = !isMobile ? 5 : 3; // Slower scroll speed
 
     const [birdPosition, setBirdPosition] = useState(GAME_HEIGHT / 2);
     const [pipes, setPipes] = useState([]);
@@ -46,6 +48,9 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
     const lastTimeRef = useRef(null);
     const isGameOverRef = useRef(isGameOver);
 
+    // Ref to hold the latest onScoreUpdate function
+    const onScoreUpdateRef = useRef(onScoreUpdate);
+
     useEffect(() => {
         isGameOverRef.current = isGameOver;
     }, [isGameOver]);
@@ -53,6 +58,10 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
     useEffect(() => {
         setHighScore((prev) => Math.max(prev, initialHighScore));
     }, [initialHighScore]);
+
+    useEffect(() => {
+        onScoreUpdateRef.current = onScoreUpdate;
+    }, [onScoreUpdate]);
 
     // Fetch the global top score using Axios when the game loads
     useEffect(() => {
@@ -80,7 +89,8 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
         if (isGameStarted && !isGameOver) {
             pipeMovementInterval = setInterval(() => {
                 setPipes((currentPipes) => {
-                    let newScore = score;
+                    let pointsScored = 0;
+
                     const newPipes = currentPipes
                         .map((pipe) => {
                             const newPipe = { ...pipe };
@@ -90,7 +100,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                                     GAME_SPAWN_WIDTH / 3 &&
                                 !newPipe.passed
                             ) {
-                                newScore++;
+                                pointsScored += 0.5;
                                 newPipe.passed = true;
                             }
 
@@ -110,9 +120,15 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                         })
                         .filter((pipe) => pipe.left > -PIPE_WIDTH);
 
-                    if (newScore !== score) {
-                        setScore(newScore);
-                        onScoreUpdate(newScore);
+                    // Update the score functionally if a point was scored
+                    if (pointsScored > 0) {
+                        setScore((prevScore) => {
+                            const updatedScore = prevScore + pointsScored;
+                            if (onScoreUpdateRef.current) {
+                                onScoreUpdateRef.current(updatedScore);
+                            }
+                            return updatedScore;
+                        });
                     }
 
                     return newPipes;
@@ -124,7 +140,8 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                     const topPipeHeight = Math.floor(
                         Math.random() * (GAME_HEIGHT - PIPE_GAP),
                     );
-                    const isObstacle = Math.random() > 0.8;
+                    // Reduced obstacle frequency for Easy Mode
+                    const isObstacle = Math.random() > 0.9;
                     setPipes((prevPipes) => [
                         ...prevPipes,
                         {
@@ -139,15 +156,16 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                         },
                     ]);
                 }
-            }, 1600);
+            }, TIME);
         }
 
         return () => {
             clearInterval(pipeMovementInterval);
             clearInterval(pipeGeneratorInterval);
         };
-    }, [isGameStarted, isGameOver, score, onScoreUpdate]);
+    }, [isGameStarted, isGameOver, GAME_SPAWN_WIDTH, LEFT]);
 
+    // Collision Detection
     useEffect(() => {
         if (!isGameStarted || isGameOver) return;
 
@@ -172,6 +190,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
         }
     }, [birdPosition, pipes, isGameStarted, isGameOver]);
 
+    // Physics Loop
     useEffect(() => {
         if (!isGameStarted || isGameOver) {
             if (rafRef.current) {
@@ -202,7 +221,6 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                 if (next > GAME_HEIGHT - BIRD_SIZE) {
                     next = GAME_HEIGHT - BIRD_SIZE;
                     velocityRef.current = 0;
-                    // handleGameOver();
                 }
 
                 return next;
@@ -224,7 +242,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
         setBirdPosition(GAME_HEIGHT / 2);
         setPipes([]);
         setScore(0);
-        onScoreUpdate(0);
+        if (onScoreUpdateRef.current) onScoreUpdateRef.current(0);
         setIsGameOver(false);
         setIsGameStarted(true);
         velocityRef.current = 0;
@@ -302,6 +320,8 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                 style={{
                     top: `${birdPosition}px`,
                     left: `${GAME_SPAWN_WIDTH / 3}px`,
+                    width: `${BIRD_SIZE}px`,
+                    height: `${BIRD_SIZE}px`,
                 }}
             />
 
@@ -314,6 +334,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                             height: `${pipe.topPipeHeight + PIPE_EXTRA_HEIGHT}px`,
                             top: `-${PIPE_EXTRA_HEIGHT}px`,
                             transform: `translateY(${pipe.verticalShift}px)`,
+                            width: `${PIPE_WIDTH}px`,
                         }}
                     />
                     <div
@@ -323,6 +344,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                             height: `${pipe.bottomPipeHeight + PIPE_EXTRA_HEIGHT}px`,
                             bottom: `-${PIPE_EXTRA_HEIGHT}px`,
                             transform: `translateY(${pipe.verticalShift}px)`,
+                            width: `${PIPE_WIDTH}px`,
                         }}
                     />
                 </div>
@@ -342,16 +364,16 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                     <p>High Score: {highScore}</p>
 
                     <div className="top-score-message">
-                        {pointsAway === 0 ? (
+                        {score <= 20 ? (
                             <p className="hill-top-text">
-                                You are currently at the top of the hill
+                                Insufficient aura? Join us to gain some!
                             </p>
-                        ) : (
-                            <p className="keep-trying-text">
-                                You are {pointsAway} points away from the top!
-                                Keep trying
+                        ) : null}
+                        {score > 20 && score < 40 ? (
+                            <p className="hill-top-text">
+                                Your CGPA is low and so is your score
                             </p>
-                        )}
+                        ) : null}
                     </div>
 
                     <button onClick={startGame}>Retry</button>

@@ -8,6 +8,16 @@ import GlobalStyle from "./GlobalStyles";
 
 export default function Pilot() {
     // useState now checks localStorage for a saved player on initial load.
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+
+    React.useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 480);
+        };
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
     const [player, setPlayer] = useState(() => {
         const savedPlayer = localStorage.getItem("flappyPlayer");
         return savedPlayer ? JSON.parse(savedPlayer) : null;
@@ -94,19 +104,75 @@ export default function Pilot() {
                 </HeaderControls>
             </AppHeader>
 
-            <MainContent>
-                <Game
-                    onGameOver={handleGameOver}
-                    onScoreUpdate={(s) => setCurrentScore(s)}
-                    initialHighScore={player ? player.score : 0}
-                />
-                {/* <Leaderboard
+            {isMobile ? (
+                <MainContentP>
+                    <p
+                        style={{
+                            fontWeight: "bold",
+                            borderRadius: "18px",
+                            color: "yellow",
+                            textAlign: "left",
+                        }}
+                    >
+                        Put your high story on Instagram story and tag{" "}
+                        <a
+                            href="https://www.instagram.com/techfest_iitbombay/"
+                            target="_blank"
+                        >
+                            Techfest, IIT Bombay
+                        </a>{" "}
+                        to
+                        <br />
+                        - 10+ Electronic Gadgets
+                        <br />
+                        - 25+ Group Turf Coupons
+                        <br />
+                        - 12+ RageRoom Tickets
+                        <br />- Free Personalised Merchandise
+                    </p>
+
+                    <Game
+                        onGameOver={handleGameOver}
+                        onScoreUpdate={(s) => setCurrentScore(s)}
+                        initialHighScore={player ? player.score : 0}
+                    />
+                </MainContentP>
+            ) : (
+                <MainContent>
+                    <p
+                        style={{
+                            fontWeight: "bold",
+                            borderRadius: "18px",
+                            color: "yellow",
+                            textAlign: "left",
+                            marginLeft: "10vw",
+                        }}
+                    >
+                        Prizes
+                        <br />
+                        - 10+ Electronic Gadgets
+                        <br />
+                        - 25+ Group Turf Coupons
+                        <br />
+                        - 12+ RageRoom Tickets
+                        <br />- Free Personalised Merchandise
+                    </p>
+                    <div style={{ transform: "translateX(-35vw)" }}>
+                        <Game
+                            onGameOver={handleGameOver}
+                            onScoreUpdate={(s) => setCurrentScore(s)}
+                            initialHighScore={player ? player.score : 0}
+                        />
+                    </div>
+
+                    {/* <Leaderboard
                     visible={showLeaderboard}
                     onClose={() => setShowLeaderboard(false)}
                     lastScore={score}
                     playerName={player.name}
                 /> */}
-            </MainContent>
+                </MainContent>
+            )}
         </AppContainer>
     );
 }
@@ -188,7 +254,16 @@ const HeaderControls = styled.div`
 const MainContent = styled.div`
     flex-grow: 1;
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     padding: 20px;
+`;
+
+const MainContentP = styled.div`
+    flex-grow: 1;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    flex-direction: column;
+    padding: 10px;
 `;
