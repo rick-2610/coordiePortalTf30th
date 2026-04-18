@@ -367,7 +367,7 @@ export default function Home() {
     // Holographic Carousel State
     const [holoIndex, setHoloIndex] = useState(0);
     const [isHoloFlickering, setIsHoloFlickering] = useState(false);
-    const holoImages = [infra, image2, image3];
+    const holoImages = [infra, robowars, image2, image3];
 
     // ================== SCROLL SECTION 1: Earth & YT Reveal ==================
     const earthYTRef = useRef(null);
