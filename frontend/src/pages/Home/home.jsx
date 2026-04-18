@@ -169,24 +169,24 @@ const departments = [
     },
     {
         id: 4,
+        department: "Marketing",
+        image: marki,
+        content:
+            "Marketing is the force that makes Techfest possible. This is the team that pitches to the biggest companies and corporates, building the entire financial foundation that powers Asia's largest science and technology festival. From cold outreach to closing high-value sponsorships, strategizing, negotiating, and delivering. Nearly every banner, stall, and activation you see on campus during Techfest is Marketing's footprint. Walk away with real-world skills in corporate communication, negotiation, and the art of closing a deal.",
+    },
+    {
+        id: 5,
         department: "Foods n Beverages",
         image: fnb,
         content:
             "Step up to manage the most dynamic and fast-paced operation of Techfest. From curating massive food zones and negotiating with top-tier vendors to executing high-stakes hospitality for tens of thousands of attendees and international guests, you dictate the flavor of the fest. Master the art of crowd management on a grand scale, and be the team that keeps the adrenaline and energy of the entire festival pumping!",
     },
     {
-        id: 5,
+        id: 6,
         department: "Hospitality",
         image: hospi,
         content:
             "Step up as the ultimate ambassadors of Techfest, orchestrating the stay, travel, and seamless experience for thousands of national participants, international delegates, and VIPs. You will master real-time crisis management, command massive on-ground logistics, and build exceptional public relations skills. From crafting a flawless first impression to handling high-profile guests, you are the crucial link that makes the entire festival feel like a world-class experience.",
-    },
-    {
-        id: 6,
-        department: "Marketing",
-        image: marki,
-        content:
-            "Marketing is the force that makes Techfest possible. This is the team that pitches to the biggest companies and corporates, building the entire financial foundation that powers Asia's largest science and technology festival. From cold outreach to closing high-value sponsorships, strategizing, negotiating, and delivering. Nearly every banner, stall, and activation you see on campus during Techfest is Marketing's footprint. Walk away with real-world skills in corporate communication, negotiation, and the art of closing a deal.",
     },
     {
         id: 7,
@@ -207,7 +207,7 @@ Joining Infra means being at the center of the action-fast, intense, and always 
         department: "Lectures",
         image: lectures,
         content:
-            "Lectures is one of Techfest’s flagship events, bringing renowned personalities from across the globe to IIT Bombay to share their ideas, experiences, and journeys. It’s where inspiration sparks insight, and perspectives expand beyond the ordinary. Be part of it—and get a chance to meet those who inspire you.",
+            "Lectures is one of Techfest’s flagship events, bringing renowned personalities from across the globe to IIT Bombay to share their ideas, experiences, and journeys. It’s where inspiration sparks insight, and perspectives expand beyond the ordinary. Be part of it-and get a chance to meet those who inspire you.",
     },
     {
         id: 10,
@@ -228,14 +228,14 @@ Joining Infra means being at the center of the action-fast, intense, and always 
         department: "Technoholix",
         image: techx,
         content:
-            "Technoholix transforms Techfest after dark, bringing mind-blowing visual shows and electrifying international artists to light up the campus. It’s where cutting-edge technology and pure entertainment collide to create an unforgettable nighttime spectacle. Be part of the magic—and get the exclusive chance to be an Artist Point of Contact (POC), working directly behind the scenes with the stars of the show.",
+            "Technoholix transforms Techfest after dark, bringing mind-blowing visual shows and electrifying international artists to light up the campus. It’s where cutting-edge technology and pure entertainment collide to create an unforgettable nighttime spectacle. Be part of the magic-and get the exclusive chance to be an Artist Point of Contact (POC), working directly behind the scenes with the stars of the show.",
     },
     {
         id: 13,
         department: "Web",
         image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=600&q=80",
         content:
-            "The Web vertical is the digital backbone of Techfest, building the robust platforms, interactive games, and seamless portals that connect millions globally. It’s where innovative coding and scalable architecture collide to run the engine of Asia’s largest science and technology festival. Be the architect of this massive digital ecosystem—and get the exclusive chance to manage high-traffic backend operations, working directly with the core infrastructure that powers the entire fest.",
+            "The Web vertical is the digital backbone of Techfest, building the robust platforms, interactive games, and seamless portals that connect millions globally. It’s where innovative coding and scalable architecture collide to run the engine of Asia’s largest science and technology festival. Be the architect of this massive digital ecosystem-and get the exclusive chance to manage high-traffic backend operations, working directly with the core infrastructure that powers the entire fest.",
     },
 ];
 
@@ -904,6 +904,33 @@ export default function Home() {
                         <div className="holo-projector-base"></div>
                     </div>
                 </div>
+
+                {/* Scroll Down Indicator */}
+                <div
+                    className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center pointer-events-auto opacity-80"
+                    style={{
+                        opacity: heroOpacity, // Fades out alongside the hero content if desired
+                        willChange: "opacity",
+                    }}
+                >
+                    <span className="text-slate-400 text-xs sm:text-sm uppercase tracking-widest mb-2 font-medium">
+                        Scroll down
+                    </span>
+                    <svg
+                        className="w-5 h-5 text-indigo-400 animate-bounce"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                        />
+                    </svg>
+                </div>
             </section>
 
             {/* ================= SCROLL SECTION 1: Earth & YT (200vh) ================= */}
@@ -919,24 +946,21 @@ export default function Home() {
                         <div className="w-full max-w-5xl [perspective:3200px] relative z-30">
                             {/* flex-col for mobile (stacked), md:flex-row for desktop (side-by-side) */}
                             <div className="flex flex-col md:flex-row w-full gap-6 md:gap-10 items-center justify-center">
-                                {/* Left Video (Desktop) / Top Video (Mobile) */}
-                                <div className="w-full md:w-1/2 aspect-video rounded-2xl overflow-hidden glass-panel border border-indigo-500/20 shadow-[0_0_50px_rgba(99,102,241,0.15)] transition-transform duration-500 [transform:rotateX(10deg)] md:[transform:rotateY(15deg)_rotateX(0deg)] hover:[transform:rotateX(0deg)_rotateY(0deg)] relative">
-                                    <iframe
-                                        className="w-full h-full absolute inset-0"
-                                        src="https://www.youtube.com/embed/0_FBwJi8VBo"
-                                        title="YouTube video player 1"
-                                        frameBorder="0"
-                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                        allowFullScreen
-                                    ></iframe>
-                                </div>
-
-                                {/* Right Video (Desktop) / Bottom Video (Mobile) */}
                                 <div className="w-full md:w-1/2 aspect-video rounded-2xl overflow-hidden glass-panel border border-indigo-500/20 shadow-[0_0_50px_rgba(99,102,241,0.15)] transition-transform duration-500 [transform:rotateX(-10deg)] md:[transform:rotateY(-15deg)_rotateX(0deg)] hover:[transform:rotateX(0deg)_rotateY(0deg)] relative">
                                     <iframe
                                         className="w-full h-full absolute inset-0"
                                         src="https://www.youtube.com/embed/Ml_fnnOmF0Q"
                                         title="YouTube video player 2"
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                        allowFullScreen
+                                    ></iframe>
+                                </div>
+                                <div className="w-full md:w-1/2 aspect-video rounded-2xl overflow-hidden glass-panel border border-indigo-500/20 shadow-[0_0_50px_rgba(99,102,241,0.15)] transition-transform duration-500 [transform:rotateX(10deg)] md:[transform:rotateY(15deg)_rotateX(0deg)] hover:[transform:rotateX(0deg)_rotateY(0deg)] relative">
+                                    <iframe
+                                        className="w-full h-full absolute inset-0"
+                                        src="https://www.youtube.com/embed/0_FBwJi8VBo"
+                                        title="YouTube video player 1"
                                         frameBorder="0"
                                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                         allowFullScreen
