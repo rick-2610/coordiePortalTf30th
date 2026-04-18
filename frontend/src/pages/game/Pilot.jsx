@@ -148,7 +148,6 @@ export default function Pilot() {
                             borderRadius: "18px",
                             color: "#d6a138",
                             textAlign: "left",
-                            marginLeft: "10vw",
                         }}
                     >
                         Put your high score on Instagram story
@@ -169,7 +168,7 @@ export default function Pilot() {
                         - 12+ RageRoom Tickets
                         <br />- Free Personalised Merchandise
                     </p>
-                    <div style={{ transform: "translateX(-35vw)" }}>
+                    <div style={{ transform: "translateX(-30vw)" }}>
                         <Game
                             onGameOver={handleGameOver}
                             onScoreUpdate={(s) => setCurrentScore(s)}
