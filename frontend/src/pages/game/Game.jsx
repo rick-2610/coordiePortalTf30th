@@ -52,7 +52,12 @@ const HIGH_SCORE_MESSAGES = [
     "Insufficient aura, join us to gain some!!",
 ];
 
-const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
+const Game = ({
+    onScoreUpdate,
+    onGameOver,
+    onGameStart,
+    initialHighScore = 0,
+}) => {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
 
     useEffect(() => {
@@ -279,11 +284,14 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
         setBirdPosition(GAME_HEIGHT / 2);
         setPipes([]);
         setScore(0);
-        setGameOverMessage(""); // Reset message
+        setGameOverMessage("");
         if (onScoreUpdateRef.current) onScoreUpdateRef.current(0);
         setIsGameOver(false);
         setIsGameStarted(true);
         velocityRef.current = 0;
+
+        // ADD THIS LINE HERE:
+        if (onGameStart) onGameStart();
     };
 
     const handleGameOver = () => {
