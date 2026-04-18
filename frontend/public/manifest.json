@@ -8,12 +8,12 @@
       "type": "image/x-icon"
     },
     {
-      "src": "tf.png",
+      "src": "tflogo.png",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "tf.png",
+      "src": "tflogo.png",
       "type": "image/png",
       "sizes": "512x512"
     }
