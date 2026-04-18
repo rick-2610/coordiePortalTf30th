@@ -10,6 +10,7 @@ urlpatterns = [
     path('<int:pk>/update_score/', update_player_score, name='update-player-score'),
     path('player/<int:pk>/', get_player, name='player-score-show'),
     path('scores/global-top/', global_top_score, name='global-top-score'),
+    path('export/coordinators/csv/', export_coordinators_csv, name='export_coordinators_csv'),
 
     path('create_coordi/', create_coordinator, name='create_coordinator'),
 ]

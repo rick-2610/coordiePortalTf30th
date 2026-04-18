@@ -159,3 +159,29 @@ def create_coordinator(request):
 
     except Exception as e:
         return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+def export_coordinators_csv(request):
+    # Create the HttpResponse object with CSV headers
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="techfest_coordinators.csv"'
+
+    writer = csv.writer(response)
+    
+    # Write the Header Row
+    writer.writerow(['Name', 'Roll Number', 'Contact Number', 'Verticals'])
+
+    # Fetch all coordinator records
+    coordinators = Coordinators.objects.all()
+
+    for coord in coordinators:
+        # Since verticals is a JSONField (a list), we join them with commas for the CSV
+        verticals_list = ", ".join(coord.verticals) if isinstance(coord.verticals, list) else coord.verticals
+        
+        writer.writerow([
+            coord.name, 
+            coord.roll_no, 
+            coord.contact_no, 
+            verticals_list
+        ])
+
+    return response
