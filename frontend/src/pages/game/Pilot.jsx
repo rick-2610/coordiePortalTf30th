@@ -8,7 +8,7 @@ import GlobalStyle from "./GlobalStyles";
 import SHA256 from "crypto-js/sha256";
 
 // Matches backend perfectly
-const SECRET_SALT = "TechFest_30th_machaxxx";
+const SECRET_SALT = process.env.REACT_APP_SECRET_SALT;
 
 export default function Pilot() {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
