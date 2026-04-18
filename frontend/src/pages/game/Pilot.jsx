@@ -7,12 +7,12 @@ import styled from "styled-components";
 import GlobalStyle from "./GlobalStyles";
 import SHA256 from "crypto-js/sha256";
 
-// Change this to a random secret string for your event
+// Matches backend perfectly
 const SECRET_SALT = "TechFest_30th_machaxxx";
 
 export default function Pilot() {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
-    const [gameStartTime, setGameStartTime] = useState(null);
+    // REMOVED: gameStartTime state is no longer needed on the frontend
 
     React.useEffect(() => {
         const handleResize = () => {
@@ -41,9 +41,17 @@ export default function Pilot() {
         setPlayer(null);
     };
 
-    // New: Sets the start time when the game begins
-    const handleGameStart = () => {
-        setGameStartTime(Date.now());
+    // SECURE: Tell the Django server to start its own clock
+    const handleGameStart = async () => {
+        if (player) {
+            try {
+                await axios.post(
+                    `https://coordi.techfest.org/player/${player.id}/start_game/`,
+                );
+            } catch (error) {
+                console.error("Could not start server stopwatch:", error);
+            }
+        }
     };
 
     const handleGameOver = async (finalScore) => {
@@ -52,19 +60,15 @@ export default function Pilot() {
         setShowLeaderboard(true);
 
         if (player) {
-            // SECURITY HANDSHAKE
-            // We create a hash of Score + StartTime + SecretSalt
-            const signature = SHA256(
-                `${finalScore}${gameStartTime}${SECRET_SALT}`,
-            ).toString();
+            // SECURE: We only hash the score and salt. Time is handled by Django now.
+            const signature = SHA256(`${finalScore}${SECRET_SALT}`).toString();
 
             try {
                 const response = await axios.patch(
                     `https://coordi.techfest.org/player/${player.id}/update_score/`,
                     {
                         score: finalScore,
-                        start_time: gameStartTime, // Sent for backend verification
-                        signature: signature, // Sent for backend verification
+                        signature: signature, // No more start_time payload sent to server!
                     },
                 );
 
@@ -77,7 +81,7 @@ export default function Pilot() {
 
                 console.log("Verified score saved for player:", player.name);
             } catch (error) {
-                console.error("Score rejected by security check:", error);
+                console.error("Score rejected by server reality check:", error);
             }
         }
     };

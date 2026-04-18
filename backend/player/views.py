@@ -67,35 +67,63 @@ def create_player(request):
     )
     
     serializer = PlayerScoreSerializer(player)
-    
     status_code = status.HTTP_201_CREATED if created else status.HTTP_200_OK
     
     return Response(serializer.data, status=status_code)
 
+
+# NEW ENDPOINT: Starts the un-hackable server clock
+@api_view(['POST'])
+def start_game(request, pk):
+    try:
+        player = PlayerScore.objects.get(pk=pk)
+        player.last_game_start = time.time() # Records exact server time
+        player.save()
+        return Response({"message": "Server stopwatch started."})
+    except PlayerScore.DoesNotExist:
+        return Response({"error": "Player not found."}, status=status.HTTP_404_NOT_FOUND)
+
+
 @api_view(['PATCH'])
 def update_player_score(request, pk):
-    player = PlayerScore.objects.get(pk=pk)
-    new_score = int(request.data.get('score'))
-    start_time = int(request.data.get('start_time'))
-    client_sig = request.data.get('signature')
+    try:
+        player = PlayerScore.objects.get(pk=pk)
+    except PlayerScore.DoesNotExist:
+        return Response({"error": "Player not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    new_score = int(request.data.get('score', 0))
+    client_sig = request.data.get('signature', '')
     
-    SECRET_SALT = "Techfest_30th_machaxxx"
+    # FIXED: Must match React EXACTLY (Capital 'F')
+    SECRET_SALT = "TechFest_30th_machaxxx"
     
-    # 1. Re-calculate the signature on the server
-    data_string = f"{new_score}{start_time}{SECRET_SALT}"
+    # 1. Check Signature (Only Score + Salt now)
+    data_string = f"{new_score}{SECRET_SALT}"
     expected_sig = hashlib.sha256(data_string.encode()).hexdigest()
     
     if client_sig != expected_sig:
-        return Response({"error": "Unauthorized score submission"}, status=403)
+        return Response({"error": "Unauthorized score submission. Signature mismatch."}, status=403)
     
-    duration_seconds = (int(time.time() * 1000) - start_time) / 1000
+    # 2. Server-Side Reality Check (The Stopwatch)
+    if not player.last_game_start:
+        return Response({"error": "Game was never started on the server."}, status=403)
+
+    duration_seconds = time.time() - player.last_game_start
+    
     # Pipes spawn every 1.1s (TIME constant in React)
     max_allowed_score = (duration_seconds / 1.1) + 10
     
+    # 3. Immediately reset the clock so they can't farm time or reuse the session
+    player.last_game_start = None
+    
     if new_score > max_allowed_score:
+        player.save() # Save the cleared clock
         return Response({"error": "Score physically impossible"}, status=403)
 
-    player.score = new_score
+    # 4. Only save if it's actually a new high score
+    if new_score > player.score:
+        player.score = new_score
+        
     player.save()
     return Response(PlayerScoreSerializer(player).data)
 
