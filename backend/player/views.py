@@ -5,6 +5,9 @@ from .models import PlayerScore, Coordinators
 from .serializers import *
 from rest_framework import status
 
+import hashlib
+import time
+
 
 # List top 10
 @api_view(['GET'])
@@ -71,23 +74,30 @@ def create_player(request):
 
 @api_view(['PATCH'])
 def update_player_score(request, pk):
-    try:
-        player = PlayerScore.objects.get(pk=pk)
-    except PlayerScore.DoesNotExist:
-        return Response({'error': 'Player not found'}, status=status.HTTP_404_NOT_FOUND)
-
-    serializer = PlayerScoreUpdateSerializer(data=request.data)
-    if serializer.is_valid():
-        new_score = serializer.validated_data['score']
-
-        if new_score > player.score:
-            player.score = new_score
-            player.save()
-        
-        response_serializer = PlayerScoreSerializer(player)
-        return Response(response_serializer.data, status=status.HTTP_200_OK)
+    player = PlayerScore.objects.get(pk=pk)
+    new_score = int(request.data.get('score'))
+    start_time = int(request.data.get('start_time'))
+    client_sig = request.data.get('signature')
     
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    SECRET_SALT = "Techfest_30th_machaxxx"
+    
+    # 1. Re-calculate the signature on the server
+    data_string = f"{new_score}{start_time}{SECRET_SALT}"
+    expected_sig = hashlib.sha256(data_string.encode()).hexdigest()
+    
+    if client_sig != expected_sig:
+        return Response({"error": "Unauthorized score submission"}, status=403)
+    
+    duration_seconds = (int(time.time() * 1000) - start_time) / 1000
+    # Pipes spawn every 1.1s (TIME constant in React)
+    max_allowed_score = (duration_seconds / 1.1) + 5 
+    
+    if new_score > max_allowed_score:
+        return Response({"error": "Score physically impossible"}, status=403)
+
+    player.score = new_score
+    player.save()
+    return Response(PlayerScoreSerializer(player).data)
 
 @api_view(['GET'])
 def get_player(request, pk):
