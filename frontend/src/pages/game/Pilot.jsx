@@ -120,8 +120,8 @@ export default function Pilot() {
                             target="_blank"
                         >
                             Techfest, IIT Bombay
-                        </a>{" "}
-                        to
+                        </a>
+                        to claim these prizes
                         <br />
                         - 10+ Electronic Gadgets
                         <br />
@@ -148,7 +148,14 @@ export default function Pilot() {
                             marginLeft: "10vw",
                         }}
                     >
-                        Prizes
+                        Put your high story on Instagram story and tag{" "}
+                        <a
+                            href="https://www.instagram.com/techfest_iitbombay/"
+                            target="_blank"
+                        >
+                            Techfest, IIT Bombay
+                        </a>
+                        to claim these prizes
                         <br />
                         - 10+ Electronic Gadgets
                         <br />

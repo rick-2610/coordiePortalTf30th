@@ -100,7 +100,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                                     GAME_SPAWN_WIDTH / 3 &&
                                 !newPipe.passed
                             ) {
-                                pointsScored += 0.5;
+                                pointsScored += 1;
                                 newPipe.passed = true;
                             }
 
