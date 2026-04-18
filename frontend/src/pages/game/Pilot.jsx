@@ -114,13 +114,13 @@ export default function Pilot() {
                             textAlign: "left",
                         }}
                     >
-                        Put your high story on Instagram story and tag{" "}
+                        Put your high score on Instagram story and tag{" "}
                         <a
                             href="https://www.instagram.com/techfest_iitbombay/"
                             target="_blank"
                         >
                             Techfest, IIT Bombay
-                        </a>
+                        </a>{" "}
                         to claim these prizes
                         <br />
                         - 10+ Electronic Gadgets
@@ -131,11 +131,13 @@ export default function Pilot() {
                         <br />- Free Personalised Merchandise
                     </p>
 
-                    <Game
-                        onGameOver={handleGameOver}
-                        onScoreUpdate={(s) => setCurrentScore(s)}
-                        initialHighScore={player ? player.score : 0}
-                    />
+                    <div style={{ transform: "translateY(-15px)" }}>
+                        <Game
+                            onGameOver={handleGameOver}
+                            onScoreUpdate={(s) => setCurrentScore(s)}
+                            initialHighScore={player ? player.score : 0}
+                        />
+                    </div>
                 </MainContentP>
             ) : (
                 <MainContent>
@@ -148,14 +150,14 @@ export default function Pilot() {
                             marginLeft: "10vw",
                         }}
                     >
-                        Put your high story on Instagram story and tag
+                        Put your high score on Instagram story and tag
                         <br />
                         <a
                             href="https://www.instagram.com/techfest_iitbombay/"
                             target="_blank"
                         >
                             Techfest, IIT Bombay
-                        </a>
+                        </a>{" "}
                         to claim these prizes
                         <br />
                         - 10+ Electronic Gadgets

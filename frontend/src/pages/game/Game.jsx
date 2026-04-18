@@ -16,6 +16,42 @@ const PIPE_GAP = 140;
 const OBSTACLE_SPEED = 1; // Slower moving pipes
 const OBSTACLE_RANGE = 30; // Moving pipes don't travel as far
 
+// Game Over Messages
+const LOW_SCORE_MESSAGES = [
+    "Bro really thought he was built different. 💀",
+    "Insufficient aura, join us to gain some!!",
+    "DD grade level gameplay",
+    "Our prizes said 'not for you, bestie.'",
+    "We set the bar low. You found a way under it.",
+    "We're not mad. We're just… disappointed. Actually we're a little mad.",
+    "This is NOT what Asia's largest fest deserves from you.",
+    "Genuinely concerning. Please hydrate and retry.",
+    "Main character energy. Side character score.",
+    "The game is not the problem. Just to clarify.",
+    "It's okay. Not everyone wins. Some people just… watch.",
+    "We believe in you. We also believe in miracles. Try again.",
+    "A pigeon scored higher. We're not joking.",
+    "This is a certified low point. Screenshot it for the memories.",
+    "History will not remember this moment. Neither will we. Try again.",
+    "In another universe, you did better. Be him.",
+    "The prizes were right there. They saw everything.",
+    "You had the time. You had the device. You had one job.",
+    "The game didn't beat you. You beat you. Reflect.",
+];
+
+const HIGH_SCORE_MESSAGES = [
+    "That was the warm up. Now go.",
+    "The prizes are still there. So are you. Coincidence?",
+    "You didn't come this far to only come this far.",
+    "The stage is being set. Make sure you're on it.",
+    "The leaderboard has space at the top. Just saying.",
+    "Breathe. Reset. Dominate.",
+    "It's not over until YOUR score is up there.",
+    "The game respects the ones who come back.",
+    "Prizes worth ₹50K are waiting for someone with your energy. Prove it.",
+    "Insufficient aura, join us to gain some!!",
+];
+
 const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
 
@@ -36,6 +72,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
     const [pipes, setPipes] = useState([]);
     const [score, setScore] = useState(0);
     const [highScore, setHighScore] = useState(initialHighScore);
+    const [gameOverMessage, setGameOverMessage] = useState("");
 
     // State to hold the global top score fetched from the API
     const [globalTopScore, setGlobalTopScore] = useState(0);
@@ -242,6 +279,7 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
         setBirdPosition(GAME_HEIGHT / 2);
         setPipes([]);
         setScore(0);
+        setGameOverMessage(""); // Reset message
         if (onScoreUpdateRef.current) onScoreUpdateRef.current(0);
         setIsGameOver(false);
         setIsGameStarted(true);
@@ -252,6 +290,11 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
         if (isGameOverRef.current) return;
         setIsGameOver(true);
         setIsGameStarted(false);
+
+        // Calculate and pick the random message based on the score
+        const messages = score <= 30 ? LOW_SCORE_MESSAGES : HIGH_SCORE_MESSAGES;
+        const randomMsg = messages[Math.floor(Math.random() * messages.length)];
+        setGameOverMessage(randomMsg);
 
         const newHighScore = Math.max(score, highScore);
         setHighScore(newHighScore);
@@ -364,16 +407,9 @@ const Game = ({ onScoreUpdate, onGameOver, initialHighScore = 0 }) => {
                     <p>High Score: {highScore}</p>
 
                     <div className="top-score-message">
-                        {score <= 20 ? (
-                            <p className="hill-top-text">
-                                Insufficient aura? Join us to gain some!
-                            </p>
-                        ) : null}
-                        {score > 20 && score < 40 ? (
-                            <p className="hill-top-text">
-                                Your CGPA is low and so is your score
-                            </p>
-                        ) : null}
+                        {gameOverMessage && (
+                            <p className="hill-top-text">{gameOverMessage}</p>
+                        )}
                     </div>
 
                     <button onClick={startGame}>Retry</button>
