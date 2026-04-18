@@ -32,6 +32,9 @@ import image2 from "./assets/image2.jpeg";
 import image3 from "./assets/image3.jpeg";
 import image4 from "./assets/image4.jpeg";
 import image5 from "./assets/image5.jpeg";
+import image6 from "./assets/image6.jpeg";
+import image7 from "./assets/image7.jpeg";
+import image8 from "./assets/image8.jpeg";
 
 function Logo({ draw, fillOpacity }) {
     return (
@@ -207,7 +210,7 @@ Joining Infra means being at the center of the action-fast, intense, and always 
         department: "Lectures",
         image: lectures,
         content:
-            "Lectures is one of Techfest’s flagship events, bringing renowned personalities from across the globe to IIT Bombay to share their ideas, experiences, and journeys. It’s where inspiration sparks insight, and perspectives expand beyond the ordinary. Be part of it-and get a chance to meet those who inspire you.",
+            "Lectures is one of Techfest’s flagship events, bringing renowned personalities from across the globe to IIT Bombay to share their ideas, experiences, and journeys. It’s where inspiration sparks insight, and perspectives expand beyond the ordinary. Be part of it, and get a chance to meet those who inspire you.",
     },
     {
         id: 10,
@@ -240,7 +243,16 @@ Joining Infra means being at the center of the action-fast, intense, and always 
 ];
 
 // Images for the Image Trail Section
-const trailImagesData = [image1, image2, image3, image4, image5];
+const trailImagesData = [
+    image1,
+    image2,
+    image3,
+    image4,
+    image5,
+    image6,
+    image7,
+    image8,
+];
 
 // Sub-component for individual trail image lifecycle
 const TrailImage = ({ id, x, y, src, onComplete, displayDuration }) => {
