@@ -90,7 +90,7 @@ def update_player_score(request, pk):
     
     duration_seconds = (int(time.time() * 1000) - start_time) / 1000
     # Pipes spawn every 1.1s (TIME constant in React)
-    max_allowed_score = (duration_seconds / 1.1) + 5 
+    max_allowed_score = (duration_seconds / 1.1) + 10
     
     if new_score > max_allowed_score:
         return Response({"error": "Score physically impossible"}, status=403)
