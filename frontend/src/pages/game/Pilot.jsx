@@ -118,8 +118,9 @@ export default function Pilot() {
                         <a
                             href="https://www.instagram.com/techfest_iitbombay/"
                             target="_blank"
+                            style={{ textDecoration: "underline" }}
                         >
-                            Techfest, IIT Bombay
+                            Techfest
                         </a>{" "}
                         to claim these prizes
                         <br />
@@ -150,13 +151,14 @@ export default function Pilot() {
                             marginLeft: "10vw",
                         }}
                     >
-                        Put your high score on Instagram story and tag
-                        <br />
+                        Put your high score on Instagram story
+                        <br /> and tag{" "}
                         <a
                             href="https://www.instagram.com/techfest_iitbombay/"
                             target="_blank"
+                            style={{ textDecoration: "underline" }}
                         >
-                            Techfest, IIT Bombay
+                            Techfest
                         </a>{" "}
                         to claim these prizes
                         <br />
@@ -266,7 +268,7 @@ const MainContent = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 20px;
+    padding: 50px;
 `;
 
 const MainContentP = styled.div`

@@ -41,6 +41,8 @@
     position: absolute;
     left: 18px;
     opacity: 0;
+    width: 60px;
+    height: auto;
     transition: opacity 0.3s ease;
 }
 
