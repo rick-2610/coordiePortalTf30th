@@ -117,7 +117,7 @@ const socialLinks = [
     },
     {
         name: "YouTube",
-        href: "https://www.youtube.com/embed/0_FBwJi8VBo",
+        href: "https://www.youtube.com/user/techfestiitbombay",
         icon: (
             <svg
                 className="w-5 h-5"
