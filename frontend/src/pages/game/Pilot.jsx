@@ -148,7 +148,8 @@ export default function Pilot() {
                             marginLeft: "10vw",
                         }}
                     >
-                        Put your high story on Instagram story and tag{" "}
+                        Put your high story on Instagram story and tag
+                        <br />
                         <a
                             href="https://www.instagram.com/techfest_iitbombay/"
                             target="_blank"
