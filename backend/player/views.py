@@ -87,6 +87,7 @@ def start_game(request, pk):
         return Response({"error": "Player not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
+
 @api_view(['PATCH'])
 def update_player_score(request, pk):
     try:
@@ -94,41 +95,64 @@ def update_player_score(request, pk):
     except PlayerScore.DoesNotExist:
         return Response({"error": "Player not found."}, status=status.HTTP_404_NOT_FOUND)
 
+    # 1. Payload Extraction
     new_score = int(request.data.get('score', 0))
     client_sig = request.data.get('signature', '')
+    jump_history = request.data.get('jump_history', []) # The new bot-detection array
     
-    # FIXED: Must match React EXACTLY (Capital 'F')
     SECRET_SALT = "TechFest_30th_machaxxx"
     
-    # 1. Check Signature (Only Score + Salt now)
+    # 2. Signature Validation (Integrity Check)
     data_string = f"{new_score}{SECRET_SALT}"
     expected_sig = hashlib.sha256(data_string.encode()).hexdigest()
     
     if client_sig != expected_sig:
-        return Response({"error": "Unauthorized score submission. Signature mismatch."}, status=403)
+        return Response({"error": "Signature mismatch. Nice try!"}, status=403)
     
-    # 2. Server-Side Reality Check (The Stopwatch)
+    # 3. Stopwatch Check (Time-based Reality Check)
     if not player.last_game_start:
-        return Response({"error": "Game was never started on the server."}, status=403)
+        return Response({"error": "No active session found. Did you start the game?"}, status=403)
 
     duration_seconds = time.time() - player.last_game_start
     
-    # Pipes spawn every 1.1s (TIME constant in React)
-    max_allowed_score = (duration_seconds / 1.1) + 10
+    # Pipes spawn every 1.1s (Mobile) or 2.0s (Desktop). 
+    # We use 1.1s as the baseline for the max possible score.
+    max_allowed_score = (duration_seconds / 1.1) + 5 
     
-    # 3. Immediately reset the clock so they can't farm time or reuse the session
+    # Reset clock immediately to prevent multi-submission from one start
     player.last_game_start = None
-    
-    if new_score > max_allowed_score:
-        player.save() # Save the cleared clock
-        return Response({"error": "Score physically impossible"}, status=403)
 
-    # 4. Only save if it's actually a new high score
+    if new_score > max_allowed_score:
+        player.save()
+        return Response({"error": "Physics violation: Score too high for time elapsed."}, status=403)
+
+    # 4. Jump History Analysis (Bot Detection)
+    if new_score > 5: # Only run for meaningful scores
+        if not jump_history or len(jump_history) < (new_score * 0.5):
+            player.save()
+            return Response({"error": "Impossible jump-to-score ratio."}, status=403)
+
+        # Bot Check: Interval Variance
+        # Real humans have "jitter." Bots click at exact intervals (e.g., every 100ms).
+        timestamps = [j['t'] for j in jump_history]
+        if len(timestamps) > 5:
+            intervals = [timestamps[i] - timestamps[i-1] for i in range(1, len(timestamps))]
+            unique_intervals = len(set(intervals))
+            
+            # If they jumped 20 times and only had 1 or 2 different interval gaps, it's a bot.
+            if unique_intervals < 3:
+                player.save()
+                return Response({"error": "Inhuman precision detected."}, status=403)
+
+    # 5. High Score Update
     if new_score > player.score:
         player.score = new_score
         
     player.save()
     return Response(PlayerScoreSerializer(player).data)
+
+
+    
 
 @api_view(['GET'])
 def get_player(request, pk):
