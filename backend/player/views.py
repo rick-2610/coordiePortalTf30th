@@ -118,22 +118,22 @@ def update_player_score(request, pk):
     # (Physics/Time limit violation check temporarily removed for genuine gameplay bugs)
 
     # 4. Jump History Analysis (Bot Detection)
-    if new_score > 5: # Only run for meaningful scores
-        if not jump_history or len(jump_history) < (new_score * 0.5):
-            player.save()
-            return Response({"error": "Impossible jump-to-score ratio."}, status=403)
+    # if new_score > 5: # Only run for meaningful scores
+    #     if not jump_history or len(jump_history) < (new_score * 0.5):
+    #         player.save()
+    #         return Response({"error": "Impossible jump-to-score ratio."}, status=403)
 
-        # Bot Check: Interval Variance
-        # Real humans have "jitter." Bots click at exact intervals (e.g., every 100ms).
-        timestamps = [j['t'] for j in jump_history]
-        if len(timestamps) > 5:
-            intervals = [timestamps[i] - timestamps[i-1] for i in range(1, len(timestamps))]
-            unique_intervals = len(set(intervals))
+    #     # Bot Check: Interval Variance
+    #     # Real humans have "jitter." Bots click at exact intervals (e.g., every 100ms).
+    #     timestamps = [j['t'] for j in jump_history]
+    #     if len(timestamps) > 5:
+    #         intervals = [timestamps[i] - timestamps[i-1] for i in range(1, len(timestamps))]
+    #         unique_intervals = len(set(intervals))
             
-            # If they jumped 20 times and only had 1 or 2 different interval gaps, it's a bot.
-            if unique_intervals < 3:
-                player.save()
-                return Response({"error": "Inhuman precision detected."}, status=403)
+    #         # If they jumped 20 times and only had 1 or 2 different interval gaps, it's a bot.
+    #         if unique_intervals < 3:
+    #             player.save()
+    #             return Response({"error": "Inhuman precision detected."}, status=403)
 
     # 5. High Score Update
     if new_score > player.score:
