@@ -87,7 +87,6 @@ def start_game(request, pk):
         return Response({"error": "Player not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
-
 @api_view(['PATCH'])
 def update_player_score(request, pk):
     try:
@@ -109,22 +108,14 @@ def update_player_score(request, pk):
     if client_sig != expected_sig:
         return Response({"error": "Signature mismatch. Nice try!"}, status=403)
     
-    # 3. Stopwatch Check (Time-based Reality Check)
+    # 3. Session Check
     if not player.last_game_start:
         return Response({"error": "No active session found. Did you start the game?"}, status=403)
 
-    duration_seconds = time.time() - player.last_game_start
-    
-    # Pipes spawn every 1.1s (Mobile) or 2.0s (Desktop). 
-    # We use 1.1s as the baseline for the max possible score.
-    max_allowed_score = (duration_seconds / 1.1) + 5 
-    
     # Reset clock immediately to prevent multi-submission from one start
     player.last_game_start = None
-
-    if new_score > max_allowed_score:
-        player.save()
-        return Response({"error": "Physics violation: Score too high for time elapsed."}, status=403)
+    
+    # (Physics/Time limit violation check temporarily removed for genuine gameplay bugs)
 
     # 4. Jump History Analysis (Bot Detection)
     if new_score > 5: # Only run for meaningful scores
