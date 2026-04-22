@@ -3,6 +3,24 @@ import axios from "axios";
 import "./Game.css";
 import spaceship from "./assets/spaceship.png";
 
+// ============================================================================
+// [FIX APPLIED] ANTI-CHEAT: Lock down requestAnimationFrame
+// This prevents players from overriding the frame rate via the browser console.
+// ============================================================================
+if (typeof window !== "undefined") {
+    try {
+        const originalRAF = window.requestAnimationFrame;
+        Object.defineProperty(window, "requestAnimationFrame", {
+            value: originalRAF,
+            writable: false, // Cannot be overwritten
+            configurable: false, // Cannot be deleted
+        });
+    } catch (e) {
+        console.warn("Anti-cheat: Could not lock requestAnimationFrame.");
+    }
+}
+// ============================================================================
+
 // Game constants (Adjusted for Easy Mode)
 const BIRD_SIZE = 35; // Slightly smaller hitbox
 const GAME_WIDTH = 400;
@@ -114,7 +132,6 @@ const Game = ({
                     "https://coordi.techfest.org/player/scores/global-top/",
                 );
                 setGlobalTopScore(response.data.top_score);
-                console.log(response.data.top_score);
             } catch (error) {
                 console.error("Failed to fetch global top score:", error);
             }
@@ -245,8 +262,20 @@ const Game = ({
 
         const loop = (time) => {
             if (!lastTimeRef.current) lastTimeRef.current = time;
-            const dt = time - lastTimeRef.current;
+            let dt = time - lastTimeRef.current;
             lastTimeRef.current = time;
+
+            // ============================================================================
+            // [FIX APPLIED] ANTI-CHEAT: Clamp Delta Time
+            // Cap the time step to 30ms. If the game is forcibly lagged (e.g., via
+            // a custom setTimeout replacing RAF), this forces the physics engine to
+            // calculate small increments, meaning the ship can no longer teleport
+            // through pipes.
+            // ============================================================================
+            if (dt > 30) {
+                dt = 30;
+            }
+            // ============================================================================
 
             const scale = dt / 24;
 
@@ -268,10 +297,10 @@ const Game = ({
                 return next;
             });
 
-            rafRef.current = requestAnimationFrame(loop);
+            rafRef.current = window.requestAnimationFrame(loop);
         };
 
-        rafRef.current = requestAnimationFrame(loop);
+        rafRef.current = window.requestAnimationFrame(loop);
 
         return () => {
             if (rafRef.current) cancelAnimationFrame(rafRef.current);
