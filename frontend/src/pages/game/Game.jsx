@@ -314,7 +314,7 @@ const Game = ({
         ctx.clearRect(0, 0, GAME_WIDTH, GAME_HEIGHT);
 
         // Draw Pipes (Assuming a default green color, change hex if needed)
-        ctx.fillStyle = "#2ecc71";
+        ctx.fillStyle = "#2ef2f2";
         pipes.forEach((pipe) => {
             const topPipeBottom = pipe.topPipeHeight + pipe.verticalShift;
             const bottomPipeTop =
