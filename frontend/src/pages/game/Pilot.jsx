@@ -54,7 +54,10 @@ export default function Pilot() {
         }
     };
 
-    const handleGameOver = async (finalScore) => {
+    // ============================================================================
+    // [FIX APPLIED] ANTI-CHEAT: Receive Jump History
+    // ============================================================================
+    const handleGameOver = async (finalScore, jumpHistory) => {
         setScore(finalScore);
         setCurrentScore(0);
         setShowLeaderboard(true);
@@ -69,6 +72,7 @@ export default function Pilot() {
                     {
                         score: finalScore,
                         signature: signature, // No more start_time payload sent to server!
+                        jump_history: jumpHistory, // ANTI-BOT: Sent for backend replay validation
                     },
                 );
 
@@ -81,10 +85,15 @@ export default function Pilot() {
 
                 console.log("Verified score saved for player:", player.name);
             } catch (error) {
+                const errorMsg =
+                    error.response?.data?.error ||
+                    "Score rejected by server reality check.";
+                alert(`Security Alert: ${errorMsg}`);
                 console.error("Score rejected by server reality check:", error);
             }
         }
     };
+    // ============================================================================
 
     if (!player) {
         return (

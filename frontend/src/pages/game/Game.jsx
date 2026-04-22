@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import axios from "axios";
 import "./Game.css";
 import spaceship from "./assets/spaceship.png";
@@ -76,6 +76,16 @@ const Game = ({
     onGameStart,
     initialHighScore = 0,
 }) => {
+    // ============================================================================
+    // [FIX APPLIED] ANTI-CHEAT: XOR Memory Masking & Telemetry
+    // ============================================================================
+    const MASK = useMemo(() => Math.floor(Math.random() * 0xffffff), []);
+    const [maskedScore, setMaskedScore] = useState(0 ^ MASK);
+    const score = maskedScore ^ MASK; // Derived readable score for UI
+
+    const jumpLogRef = useRef([]); // Telemetry array
+    // ============================================================================
+
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
 
     useEffect(() => {
@@ -93,7 +103,7 @@ const Game = ({
 
     const [birdPosition, setBirdPosition] = useState(GAME_HEIGHT / 2);
     const [pipes, setPipes] = useState([]);
-    const [score, setScore] = useState(0);
+
     const [highScore, setHighScore] = useState(initialHighScore);
     const [gameOverMessage, setGameOverMessage] = useState("");
 
@@ -179,16 +189,22 @@ const Game = ({
                         })
                         .filter((pipe) => pipe.left > -PIPE_WIDTH);
 
-                    // Update the score functionally if a point was scored
+                    // ============================================================================
+                    // [FIX APPLIED] SECURE SCORE UPDATE
+                    // ============================================================================
                     if (pointsScored > 0) {
-                        setScore((prevScore) => {
-                            const updatedScore = prevScore + pointsScored;
+                        setMaskedScore((prevMasked) => {
+                            const currentRealScore = prevMasked ^ MASK;
+                            const updatedScore =
+                                currentRealScore + pointsScored;
+
                             if (onScoreUpdateRef.current) {
                                 onScoreUpdateRef.current(updatedScore);
                             }
-                            return updatedScore;
+                            return updatedScore ^ MASK;
                         });
                     }
+                    // ============================================================================
 
                     return newPipes;
                 });
@@ -222,7 +238,7 @@ const Game = ({
             clearInterval(pipeMovementInterval);
             clearInterval(pipeGeneratorInterval);
         };
-    }, [isGameStarted, isGameOver, GAME_SPAWN_WIDTH, LEFT]);
+    }, [isGameStarted, isGameOver, GAME_SPAWN_WIDTH, LEFT, MASK]);
 
     // Collision Detection
     useEffect(() => {
@@ -267,10 +283,6 @@ const Game = ({
 
             // ============================================================================
             // [FIX APPLIED] ANTI-CHEAT: Clamp Delta Time
-            // Cap the time step to 30ms. If the game is forcibly lagged (e.g., via
-            // a custom setTimeout replacing RAF), this forces the physics engine to
-            // calculate small increments, meaning the ship can no longer teleport
-            // through pipes.
             // ============================================================================
             if (dt > 30) {
                 dt = 30;
@@ -312,14 +324,20 @@ const Game = ({
     const startGame = () => {
         setBirdPosition(GAME_HEIGHT / 2);
         setPipes([]);
-        setScore(0);
+
+        // ============================================================================
+        // [FIX APPLIED] RESET SECURE STATES
+        // ============================================================================
+        setMaskedScore(0 ^ MASK);
+        jumpLogRef.current = [];
+        // ============================================================================
+
         setGameOverMessage("");
         if (onScoreUpdateRef.current) onScoreUpdateRef.current(0);
         setIsGameOver(false);
         setIsGameStarted(true);
         velocityRef.current = 0;
 
-        // ADD THIS LINE HERE:
         if (onGameStart) onGameStart();
     };
 
@@ -328,7 +346,7 @@ const Game = ({
         setIsGameOver(true);
         setIsGameStarted(false);
 
-        // Calculate and pick the random message based on the score
+        // Calculate and pick the random message based on the secure score
         const messages = score <= 30 ? LOW_SCORE_MESSAGES : HIGH_SCORE_MESSAGES;
         const randomMsg = messages[Math.floor(Math.random() * messages.length)];
         setGameOverMessage(randomMsg);
@@ -341,7 +359,11 @@ const Game = ({
             setGlobalTopScore(newHighScore);
         }
 
-        onGameOver(newHighScore);
+        // ============================================================================
+        // [FIX APPLIED] PASS TELEMETRY TO PILOT
+        // Passes the secure score and the full array of jump timestamps
+        // ============================================================================
+        onGameOver(newHighScore, jumpLogRef.current);
     };
 
     const handleJump = () => {
@@ -350,6 +372,15 @@ const Game = ({
             startGame();
         }
         velocityRef.current = JUMP_VELOCITY;
+
+        // ============================================================================
+        // [FIX APPLIED] RECORD JUMP TELEMETRY
+        // ============================================================================
+        jumpLogRef.current.push({
+            t: Date.now(),
+            y: parseFloat(birdPosition.toFixed(2)),
+        });
+        // ============================================================================
     };
 
     const handleJumpRef = useRef(handleJump);
@@ -382,7 +413,6 @@ const Game = ({
         return () => window.removeEventListener("keydown", onKeyDown);
     }, []);
 
-    // Calculate how far the player is from the top score
     const effectiveTopScore = Math.max(globalTopScore, highScore);
     const pointsAway = effectiveTopScore - highScore;
 
