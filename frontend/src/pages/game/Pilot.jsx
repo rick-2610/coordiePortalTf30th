@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Game from "./Game";
-import Leaderboard from "./Leaderboard";
+import Leaderboard from "./Leaderboard"; // Note: ensure this is used or removed if unused
 import HomePage from "./HomePage";
 import styled from "styled-components";
 import GlobalStyle from "./GlobalStyles";
@@ -14,7 +14,7 @@ export default function Pilot() {
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
     // REMOVED: gameStartTime state is no longer needed on the frontend
 
-    React.useEffect(() => {
+    useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= 480);
         };
@@ -121,9 +121,27 @@ export default function Pilot() {
                     <p
                         style={{
                             fontWeight: "bold",
+                            color: "#00ffff",
+                            textAlign: "left",
+                            margin: 0,
+                            lineHeight: "1.4",
+                        }}
+                    >
+                        Winners will be announced today (22nd EOD) based on
+                        scores till 10 PM. After that, scores reset — clean
+                        slate, no carry forward.
+                        <br />
+                        <br />
+                        Phase 2 details drop with the results.
+                    </p>
+
+                    <p
+                        style={{
+                            fontWeight: "bold",
                             borderRadius: "18px",
                             color: "#d6a138",
                             textAlign: "left",
+                            margin: 0,
                         }}
                     >
                         Put your high score on Instagram story and tag{" "}
@@ -131,7 +149,10 @@ export default function Pilot() {
                             href="https://www.instagram.com/techfest_iitbombay/"
                             target="_blank"
                             rel="noreferrer"
-                            style={{ textDecoration: "underline" }}
+                            style={{
+                                textDecoration: "underline",
+                                color: "inherit",
+                            }}
                         >
                             Techfest
                         </a>{" "}
@@ -145,7 +166,7 @@ export default function Pilot() {
                         <br />- Free Personalised Merchandise
                     </p>
 
-                    <div style={{ transform: "translateY(-15px)" }}>
+                    <div>
                         <Game
                             onGameOver={handleGameOver}
                             onGameStart={handleGameStart}
@@ -156,34 +177,26 @@ export default function Pilot() {
                 </MainContentP>
             ) : (
                 <MainContent>
-                    <p
-                        style={{
-                            fontWeight: "bold",
-                            borderRadius: "18px",
-                            color: "#d6a138",
-                            textAlign: "left",
-                        }}
-                    >
-                        Put your high score on Instagram story
-                        <br /> and tag{" "}
-                        <a
-                            href="https://www.instagram.com/techfest_iitbombay/"
-                            target="_blank"
-                            rel="noreferrer"
-                            style={{ textDecoration: "underline" }}
+                    <div style={{ flex: 1, maxWidth: "300px" }}>
+                        <p
+                            style={{
+                                fontWeight: "bold",
+                                color: "#00ffff",
+                                textAlign: "left",
+                                margin: 0,
+                                lineHeight: "1.4",
+                            }}
                         >
-                            Techfest
-                        </a>{" "}
-                        to claim these prizes
-                        <br />
-                        - 10+ Electronic Gadgets
-                        <br />
-                        - 25+ Group Turf Coupons
-                        <br />
-                        - 12+ RageRoom Tickets
-                        <br />- Free Personalised Merchandise
-                    </p>
-                    <div style={{ transform: "translateX(-30vw)" }}>
+                            Winners will be announced today (22nd EOD) based on
+                            scores till 10 PM. After that, scores reset — clean
+                            slate, no carry forward.
+                            <br />
+                            <br />
+                            Phase 2 details drop with the results.
+                        </p>
+                    </div>
+
+                    <div style={{ flex: "0 1 auto" }}>
                         <Game
                             onGameOver={handleGameOver}
                             onGameStart={handleGameStart}
@@ -191,13 +204,46 @@ export default function Pilot() {
                             initialHighScore={player ? player.score : 0}
                         />
                     </div>
+
+                    <div style={{ flex: 1, maxWidth: "300px" }}>
+                        <p
+                            style={{
+                                fontWeight: "bold",
+                                borderRadius: "18px",
+                                color: "#d6a138",
+                                textAlign: "left",
+                                margin: 0,
+                            }}
+                        >
+                            Put your high score on Instagram story
+                            <br /> and tag{" "}
+                            <a
+                                href="https://www.instagram.com/techfest_iitbombay/"
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{
+                                    textDecoration: "underline",
+                                    color: "inherit",
+                                }}
+                            >
+                                Techfest
+                            </a>{" "}
+                            to claim these prizes
+                            <br />
+                            - 10+ Electronic Gadgets
+                            <br />
+                            - 25+ Group Turf Coupons
+                            <br />
+                            - 12+ RageRoom Tickets
+                            <br />- Free Personalised Merchandise
+                        </p>
+                    </div>
                 </MainContent>
             )}
         </AppContainer>
     );
 }
 
-// Styled components remain exactly as you provided them
 const AppContainer = styled.div`
     padding-top: 100px;
     display: flex;
@@ -219,6 +265,7 @@ const AppContainer = styled.div`
     background-attachment: fixed;
     background-color: #000;
     color: #fff;
+    box-sizing: border-box;
 `;
 
 const AppHeader = styled.header`
@@ -251,16 +298,22 @@ const HeaderControls = styled.div`
 const MainContent = styled.div`
     flex-grow: 1;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
-    padding: 50px;
+    padding: 30px 5vw;
+    gap: 5vw;
+    width: 100%;
+    box-sizing: border-box;
 `;
 
 const MainContentP = styled.div`
     flex-grow: 1;
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
-    padding: 10px;
+    padding: 20px;
+    gap: 25px;
+    width: 100%;
+    box-sizing: border-box;
 `;
