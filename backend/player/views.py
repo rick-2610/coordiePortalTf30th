@@ -1,7 +1,7 @@
 from rest_framework import generics
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import PlayerScore, Coordinators
+from .models import PlayerScore2, Coordinators
 from .serializers import *
 from rest_framework import status
 
@@ -16,7 +16,7 @@ import time
 @api_view(['GET'])
 def top_scores_list(request):
     # Get the top 10 players by score
-    top = PlayerScore.objects.all().order_by('-score')[:10]
+    top = PlayerScore2.objects.all().order_by('-score')[:10]
     serializer = PlayerScoreSerializer(top, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -48,12 +48,12 @@ def live_update(request):
         return Response({'detail': 'score must be an integer'}, status=400)
 
 
-    obj, created = PlayerScore.objects.get_or_create(name=name, defaults={'score': score})
+    obj, created = PlayerScore2.objects.get_or_create(name=name, defaults={'score': score})
     if not created and score > obj.score:
         obj.score = score
         obj.save()
 
-    top = PlayerScore.objects.all().order_by('-score', 'updated_at')[:10]
+    top = PlayerScore2.objects.all().order_by('-score', 'updated_at')[:10]
     top_serialized = PlayerScoreSerializer(top, many=True)
     return Response({'top': top_serialized.data})
 
@@ -64,7 +64,7 @@ def create_player(request):
     if not name:
         return Response({'error': 'Name is required'}, status=status.HTTP_400_BAD_REQUEST)
 
-    player, created = PlayerScore.objects.get_or_create(
+    player, created = PlayerScore2.objects.get_or_create(
         name=name, 
         defaults={'score': 0}
     )
@@ -79,19 +79,19 @@ def create_player(request):
 @api_view(['POST'])
 def start_game(request, pk):
     try:
-        player = PlayerScore.objects.get(pk=pk)
+        player = PlayerScore2.objects.get(pk=pk)
         player.last_game_start = time.time() # Records exact server time
         player.save()
         return Response({"message": "Server stopwatch started."})
-    except PlayerScore.DoesNotExist:
+    except PlayerScore2.DoesNotExist:
         return Response({"error": "Player not found."}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['PATCH'])
 def update_player_score(request, pk):
     try:
-        player = PlayerScore.objects.get(pk=pk)
-    except PlayerScore.DoesNotExist:
+        player = PlayerScore2.objects.get(pk=pk)
+    except PlayerScore2.DoesNotExist:
         return Response({"error": "Player not found."}, status=status.HTTP_404_NOT_FOUND)
 
     # 1. Payload Extraction
@@ -148,8 +148,8 @@ def update_player_score(request, pk):
 @api_view(['GET'])
 def get_player(request, pk):
     try:
-        player = PlayerScore.objects.get(pk=pk)
-    except PlayerScore.DoesNotExist:
+        player = PlayerScore2.objects.get(pk=pk)
+    except PlayerScore2.DoesNotExist:
         return Response({'error': 'Player not found'}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = PlayerScoreSerializer(player)
@@ -157,7 +157,7 @@ def get_player(request, pk):
 
 @api_view(['GET'])
 def global_top_score(request):
-    top_player = PlayerScore.objects.all().order_by('-score').first()
+    top_player = PlayerScore2.objects.all().order_by('-score').first()
     top_score_value = top_player.score if top_player else 0
     return Response({'top_score': top_score_value}, status=status.HTTP_200_OK)
 
