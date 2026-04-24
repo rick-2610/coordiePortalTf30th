@@ -6,6 +6,23 @@ import spaceship from "./assets/spaceship.png";
 // ============================================================================
 // [FIX APPLIED] ANTI-CHEAT: Lock down requestAnimationFrame
 // ============================================================================
+
+// Prevent Canvas Hooking
+const originalDrawImage = CanvasRenderingContext2D.prototype.drawImage;
+const originalFillRect = CanvasRenderingContext2D.prototype.fillRect;
+
+Object.defineProperties(CanvasRenderingContext2D.prototype, {
+    drawImage: {
+        value: originalDrawImage,
+        writable: false,
+        configurable: false,
+    },
+    fillRect: { value: originalFillRect, writable: false, configurable: false },
+});
+
+// Prevent React Fiber sniffing (Optional, but helps mask state)
+document.addEventListener("contextmenu", (e) => e.preventDefault());
+
 if (typeof window !== "undefined") {
     try {
         const originalRAF = window.requestAnimationFrame;
@@ -99,7 +116,7 @@ const Game = ({
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const TIME = !isMobile ? 900 : 2000;
+    const TIME = !isMobile ? 900 : 1800;
     const GAME_SPAWN_WIDTH = !isMobile ? GAME_WIDTH / 2 : GAME_WIDTH / 2;
     const LEFT = !isMobile ? 5 : 3;
 
