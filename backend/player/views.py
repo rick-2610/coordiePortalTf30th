@@ -82,6 +82,7 @@ def start_game(request, pk):
     try:
         player = PlayerScore2.objects.get(pk=pk)
         player.last_game_start = time.time() # Records exact server time
+        player.save()
         return Response({"message": "Server stopwatch started."})
     except PlayerScore2.DoesNotExist:
         return Response({"error": "Player not found."}, status=status.HTTP_404_NOT_FOUND)
