@@ -116,7 +116,7 @@ const Game = ({
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    const TIME = !isMobile ? 900 : 1800;
+    const TIME = !isMobile ? 1200 : 1800;
     const GAME_SPAWN_WIDTH = !isMobile ? GAME_WIDTH / 2 : GAME_WIDTH / 2;
     const LEFT = !isMobile ? 5 : 3;
 
