@@ -86,7 +86,6 @@ def start_game(request, pk):
     except PlayerScore2.DoesNotExist:
         return Response({"error": "Player not found."}, status=status.HTTP_404_NOT_FOUND)
 
-
 @api_view(['PATCH'])
 def update_player_score(request, pk):
     try:
@@ -97,7 +96,8 @@ def update_player_score(request, pk):
     # 1. Payload Extraction
     new_score = int(request.data.get('score', 0))
     client_sig = request.data.get('signature', '')
-    jump_history = request.data.get('jump_history', []) # The new bot-detection array
+    jump_history = request.data.get('jump_history', []) 
+    is_mobile = request.data.get('is_mobile', False) # Passed from client to know pipe spawn rate
     
     SECRET_SALT = "TechFest_30th_machaxxx"
     
@@ -109,29 +109,49 @@ def update_player_score(request, pk):
         return Response({"error": "Signature mismatch. Nice try!"}, status=403)
     
     # 3. Session Check
-    if not player.last_game_start:
-        return Response({"error": "No active session found. Did you start the game?"}, status=403)
+    # A fresh start will be a massive Unix timestamp (e.g., 1700000000+). 
+    # If it's a small number, it's just the 'time alive' from a previous completed game.
+    # if not player.last_game_start or player.last_game_start < 1000000000:
+    #     return Response({"error": "No active session found. Did you start the game?"}, status=403)
 
-    # Reset clock immediately to prevent multi-submission from one start
-    player.last_game_start = None
+    # Calculate exact time alive
+    if player.last_game_start:
+        time_alive_seconds = time.time() - player.last_game_start
     
-    # (Physics/Time limit violation check temporarily removed for genuine gameplay bugs)
+    # # 4. Math & Bot Validation
+    # if new_score > 5:
+    #     # A) Maximum Possible Score Check
+    #     # TIME constant from frontend: Desktop = 900ms (0.9s), Mobile = 2000ms (2s)
+    #     time_between_pipes = 2.0 if is_mobile else 0.9
+        
+    #     # Max score = (time alive / spawn rate) + 2 (buffer for pipes on screen at start)
+    #     max_possible_score = math.floor(time_alive_seconds / time_between_pipes) + 2
+        
+    #     if new_score > max_possible_score:
+    #         player.last_game_start = time_alive_seconds # Save duration before rejecting
+    #         player.save()
+    #         return Response({"error": "Mathematically impossible score for time played."}, status=403)
 
-    # 4. Jump History Analysis (Bot Detection)
-    # if new_score > 5: # Only run for meaningful scores
+    #     # B) Jump History Check
     #     if not jump_history or len(jump_history) < (new_score * 0.5):
+    #         player.last_game_start = time_alive_seconds
     #         player.save()
     #         return Response({"error": "Impossible jump-to-score ratio."}, status=403)
 
-    #     # Bot Check: Interval Variance
-    #     # Real humans have "jitter." Bots click at exact intervals (e.g., every 100ms).
-    #     timestamps = [j['t'] for j in jump_history]
+    #     # C) Bot Detection: Jump Cadence Variance (Standard Deviation)
+    #     # Real humans have jitter. Bots click with exact intervals.
+    #     timestamps = [j.get('t', 0) for j in jump_history]
     #     if len(timestamps) > 5:
     #         intervals = [timestamps[i] - timestamps[i-1] for i in range(1, len(timestamps))]
-    #         unique_intervals = len(set(intervals))
             
-    #         # If they jumped 20 times and only had 1 or 2 different interval gaps, it's a bot.
-    #         if unique_intervals < 3:
+    #         # Calculate standard deviation
+    #         mean_interval = sum(intervals) / len(intervals)
+    #         variance = sum((x - mean_interval) ** 2 for x in intervals) / len(intervals)
+    #         std_dev = math.sqrt(variance)
+            
+    #         # If standard deviation is less than 10ms, a machine is generating the clicks
+    #         if std_dev < 10:
+    #             player.last_game_start = time_alive_seconds
     #             player.save()
     #             return Response({"error": "Inhuman precision detected."}, status=403)
 
@@ -139,7 +159,10 @@ def update_player_score(request, pk):
     if new_score > player.score:
         player.score = new_score
         
+    # 6. Overwrite the timestamp with the final Time Alive duration
+    player.last_game_start = time_alive_seconds
     player.save()
+    
     return Response(PlayerScoreSerializer(player).data)
 
 
