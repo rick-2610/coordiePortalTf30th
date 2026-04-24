@@ -118,7 +118,7 @@ const Game = ({
 
     const TIME = !isMobile ? 1200 : 1700;
     const GAME_SPAWN_WIDTH = !isMobile ? GAME_WIDTH / 2 : GAME_WIDTH / 2;
-    const LEFT = !isMobile ? 5 : 3;
+    const LEFT = !isMobile ? 5 : 3.5;
 
     const [birdPosition, setBirdPosition] = useState(GAME_HEIGHT / 2);
     const [pipes, setPipes] = useState([]);
