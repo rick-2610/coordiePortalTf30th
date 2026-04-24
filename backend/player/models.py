@@ -24,6 +24,7 @@ class PlayerScore2(models.Model):
     
     # THE SERVER STOPWATCH: Stores exact start time in seconds
     last_game_start = models.FloatField(null=True, blank=True)
+    high_score_time = models.FloatField(null=True, blank=True, default=0)
 
     class Meta:
         ordering = ['-score', 'updated_at']

@@ -75,13 +75,13 @@ def create_player(request):
     return Response(serializer.data, status=status_code)
 
 
+
 # NEW ENDPOINT: Starts the un-hackable server clock
 @api_view(['POST'])
 def start_game(request, pk):
     try:
         player = PlayerScore2.objects.get(pk=pk)
         player.last_game_start = time.time() # Records exact server time
-        player.save()
         return Response({"message": "Server stopwatch started."})
     except PlayerScore2.DoesNotExist:
         return Response({"error": "Player not found."}, status=status.HTTP_404_NOT_FOUND)
@@ -158,9 +158,8 @@ def update_player_score(request, pk):
     # 5. High Score Update
     if new_score > player.score:
         player.score = new_score
+        player.high_score_time = time_alive_seconds
         
-    # 6. Overwrite the timestamp with the final Time Alive duration
-    player.last_game_start = time_alive_seconds
     player.save()
     
     return Response(PlayerScoreSerializer(player).data)

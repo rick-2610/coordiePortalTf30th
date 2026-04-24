@@ -10,4 +10,4 @@ class PlayerScoreSerializer(serializers.ModelSerializer):
 class PlayerScoreUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlayerScore2
-        fields = ['score']
+        fields = ['score', 'high_score_time']
