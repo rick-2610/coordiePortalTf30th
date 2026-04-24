@@ -395,7 +395,16 @@ const Game = ({
         onGameOver(newHighScore, jumpLogRef.current);
     };
 
-    const handleJump = () => {
+    // ============================================================================
+    // [ANTI-CHEAT] isTrusted check applied to jump handler
+    // ============================================================================
+    const handleJump = (e) => {
+        // Blocks scripts/console commands from triggering a jump
+        if (!e || e.isTrusted === false) {
+            console.warn("Anti-Cheat: Simulated input detected and blocked!");
+            return;
+        }
+
         if (isGameOver) return;
         if (!isGameStarted) {
             startGame();
@@ -415,6 +424,12 @@ const Game = ({
 
     useEffect(() => {
         const onKeyDown = (e) => {
+            // [ANTI-CHEAT] Fast-fail for simulated keyboard inputs
+            if (!e.isTrusted) {
+                console.warn("Anti-Cheat: Simulated keyboard input detected!");
+                return;
+            }
+
             const tag = e.target && e.target.tagName;
             if (
                 tag === "INPUT" ||
@@ -430,7 +445,7 @@ const Game = ({
                 e.keyCode === 32
             ) {
                 e.preventDefault();
-                if (handleJumpRef.current) handleJumpRef.current();
+                if (handleJumpRef.current) handleJumpRef.current(e); // Pass the event object here
             }
         };
 
@@ -444,7 +459,7 @@ const Game = ({
     return (
         <div
             className="game-area"
-            onClick={handleJump}
+            onClick={handleJump} // Automatically passes the React SyntheticEvent
             style={{
                 position: "relative",
                 width: GAME_WIDTH,
