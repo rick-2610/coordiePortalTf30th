@@ -136,12 +136,10 @@ export default function Pilot() {
                             lineHeight: "1.4",
                         }}
                     >
-                        Winners will be announced today (22nd EOD) based on
-                        scores till 10 PM. After that, scores reset — clean
-                        slate, no carry forward.
+                        Phase 2 of the game has started!!!
                         <br />
-                        <br />
-                        Phase 2 details drop with the results.
+                        Phase 2 will go on till 27th April so keep grinding for
+                        exclusive prizes
                     </p>
 
                     <p
@@ -196,12 +194,10 @@ export default function Pilot() {
                                 lineHeight: "1.4",
                             }}
                         >
-                            Winners will be announced today (22nd EOD) based on
-                            scores till 10 PM. After that, scores reset — clean
-                            slate, no carry forward.
+                            Phase 2 of the game has started!!!
                             <br />
-                            <br />
-                            Phase 2 details drop with the results.
+                            Phase 2 will go on till 27th April so keep grinding
+                            for exclusive prizes
                         </p>
                     </div>
 
