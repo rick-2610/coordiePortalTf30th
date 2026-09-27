@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useGameSocket } from "./useGameSocket";
 
 const W = 900,
@@ -26,7 +26,6 @@ const TYPES = {
     archer: { label: "Archer", cost: 30 },
     catapult: { label: "Catapult", cost: 55 },
 };
-// Display-only key hints; the server is the one that decides what's affordable.
 const KEYS = ["1", "2", "3", "4"];
 const CASTLE_HP = 1500;
 
@@ -83,7 +82,11 @@ function rrect(ctx, x, y, w, h, r) {
 }
 
 export function GameCanvas({ code }) {
-    const canvasRef = useRef(null);
+    // Callback ref instead of a plain ref: LobbyView renders instead of
+    // <canvas> while phase === "lobby", so a plain ref stays null forever if
+    // effects only run once on mount. Storing the element in state makes the
+    // effects below re-run and attach correctly once <canvas> actually mounts.
+    const [canvasEl, setCanvasEl] = useState(null);
     const scaleRef = useRef(1);
     const {
         connected,
@@ -103,24 +106,24 @@ export function GameCanvas({ code }) {
 
     // ---- canvas resize ----
     useEffect(() => {
-        const canvas = canvasRef.current;
+        if (!canvasEl) return;
         function fit() {
-            const r = canvas.getBoundingClientRect(),
+            const r = canvasEl.getBoundingClientRect(),
                 dpr = window.devicePixelRatio || 1;
-            canvas.width = Math.max(300, Math.round(r.width * dpr));
-            canvas.height = canvas.width;
-            scaleRef.current = canvas.width / W;
+            canvasEl.width = Math.max(300, Math.round(r.width * dpr));
+            canvasEl.height = canvasEl.width;
+            scaleRef.current = canvasEl.width / W;
         }
         const ro = new ResizeObserver(fit);
-        ro.observe(canvas);
+        ro.observe(canvasEl);
         fit();
         return () => ro.disconnect();
-    }, []);
+    }, [canvasEl]);
 
     // ---- render loop: purely draws the latest server snapshot, never simulates ----
     useEffect(() => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d");
+        if (!canvasEl) return;
+        const ctx = canvasEl.getContext("2d");
         let raf;
         function frame() {
             draw(ctx, scaleRef.current, stateRef.current, mySeatRef.current);
@@ -128,7 +131,7 @@ export function GameCanvas({ code }) {
         }
         raf = requestAnimationFrame(frame);
         return () => cancelAnimationFrame(raf);
-    }, []);
+    }, [canvasEl]);
 
     // ---- keyboard input: 1/2/3 spawn, 4 cycles target - always acts on MY seat only ----
     useEffect(() => {
@@ -146,11 +149,11 @@ export function GameCanvas({ code }) {
 
     // ---- click on my own keep's buttons ----
     useEffect(() => {
-        const canvas = canvasRef.current;
+        if (!canvasEl) return;
         function onDown(e) {
             if (phase !== "playing" || mySeat == null || !stateRef.current)
                 return;
-            const r = canvas.getBoundingClientRect();
+            const r = canvasEl.getBoundingClientRect();
             const x = ((e.clientX - r.left) * W) / r.width,
                 y = ((e.clientY - r.top) * W) / r.height;
             const seat = SEATS[mySeat];
@@ -169,9 +172,9 @@ export function GameCanvas({ code }) {
                 }
             }
         }
-        canvas.addEventListener("pointerdown", onDown);
-        return () => canvas.removeEventListener("pointerdown", onDown);
-    }, [phase, mySeat, spawn, cycleTarget]);
+        canvasEl.addEventListener("pointerdown", onDown);
+        return () => canvasEl.removeEventListener("pointerdown", onDown);
+    }, [phase, mySeat, spawn, cycleTarget, canvasEl]);
 
     if (phase === "lobby") {
         return (
@@ -196,7 +199,7 @@ export function GameCanvas({ code }) {
             }}
         >
             <canvas
-                ref={canvasRef}
+                ref={setCanvasEl}
                 style={{
                     width: "100%",
                     height: "100%",
@@ -335,9 +338,6 @@ function draw(ctx, scale, state, mySeat) {
 
     ctx.save();
     if (mySeat != null) {
-        // Rotate the camera so MY seat always renders at the bottom, facing
-        // "up" toward the board, same as sitting at a physical table. Every
-        // other seat rotates around me exactly the way it would in real life.
         ctx.translate(450, 450);
         ctx.rotate(-SEATS[mySeat].ang);
         ctx.translate(-450, -450);
@@ -363,7 +363,6 @@ function draw(ctx, scale, state, mySeat) {
     }
     ctx.restore();
 
-    // HUD text drawn AFTER restoring the camera rotation so it's always upright
     ctx.textAlign = "left";
     ctx.textBaseline = "middle";
     ctx.font = `700 15px ${FONT}`;
@@ -559,7 +558,6 @@ function drawKeep(ctx, p, state, mySeat) {
     ctx.font = `800 14px ${SERIF}`;
     ctx.fillText((state.leader === p.seat ? "\u265B " : "") + p.name, 150, -10);
 
-    // buttons: only rendered "live"/clickable for the local player's own keep
     for (let i = 0; i < 4; i++) {
         const b = BTN(i),
             isT = i === 3,
