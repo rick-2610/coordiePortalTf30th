@@ -27,6 +27,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = [
     'coordi.techfest.org',
+    'freshie.techfest.org',
     '13.223.126.6',
     '127.0.0.1', 
     'localhost',
@@ -34,12 +35,14 @@ ALLOWED_HOSTS = [
 
 CORS_ALLOWED_ORIGINS = [
     "https://coordi.techfest.org",
+    "https://freshie.techfest.org",
     "http://localhost:3000",
     "http://13.223.126.6"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://coordi.techfest.org",
+    "https://freshie.techfest.org",
 ]
 
 
