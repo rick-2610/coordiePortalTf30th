@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { createLobby, joinLobby } from "./api";
 import { GameCanvas } from "./GameCanvas";
+import Login from "./Login";
 
 const SEAT_NAMES = [
     "South (bottom)",
@@ -10,9 +11,14 @@ const SEAT_NAMES = [
 ];
 
 export default function Lobby() {
+    const [authed, setAuthed] = useState(!!localStorage.getItem("access"));
     const [code, setCode] = useState(null);
     const [joinCode, setJoinCode] = useState("");
     const [error, setError] = useState("");
+
+    if (!authed) {
+        return <Login onAuthed={() => setAuthed(true)} />;
+    }
 
     async function handleCreate() {
         setError("");
@@ -35,7 +41,11 @@ export default function Lobby() {
     }
 
     if (code) {
-        return <LobbyRoom code={code} />;
+        return (
+            <div style={styles.page}>
+                <GameCanvas code={code} />
+            </div>
+        );
     }
 
     return (
@@ -73,21 +83,10 @@ export default function Lobby() {
     );
 }
 
-function LobbyRoom({ code }) {
-    // Mounting GameCanvas immediately keeps a single WebSocket connection alive
-    // across the lobby -> playing transition; GameCanvas itself switches its UI
-    // based on `phase` from the socket state.
-    return (
-        <div style={styles.page}>
-            <GameCanvas code={code} />
-        </div>
-    );
-}
-
 const styles = {
     page: {
         minHeight: "100vh",
-        paddingTop: 100, // clears the fixed navbar — adjust to match its real height
+        paddingTop: 100,
         paddingBottom: 40,
         background: "linear-gradient(180deg, #0b1220 0%, #0e1a2e 100%)",
         boxSizing: "border-box",
