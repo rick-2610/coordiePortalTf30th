@@ -29,7 +29,7 @@ ALLOWED_HOSTS = [
     'coordi.techfest.org',
     'freshie.techfest.org',
     '13.223.126.6',
-    '127.0.0.1', 
+    '127.0.0.1',
     'localhost',
 ]
 
@@ -46,7 +46,6 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -57,7 +56,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'whitenoise.runserver_nostatic',
+    'channels',
     'rest_framework',
+    'rest_framework_simplejwt',
     'corsheaders',
     'player',
 ]
@@ -94,6 +95,35 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+# --- Channels ---
+# ASGI_APPLICATION replaces WSGI as the entrypoint when running via daphne;
+# WSGI_APPLICATION above is left in place in case you still need it for any
+# management commands or a fallback WSGI server.
+ASGI_APPLICATION = 'backend.asgi.application'
+
+# Dev / single-process: in-memory layer, no extra infra needed.
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    },
+}
+# Production (needed as soon as you run more than one worker process, or want
+# the game to survive a process restart mid-lobby): swap to Redis instead -
+#
+#   pip install channels_redis
+#
+#   CHANNEL_LAYERS = {
+#       'default': {
+#           'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#           'CONFIG': {'hosts': [('127.0.0.1', 6379)]},
+#       },
+#   }
+#
+# Note: Redis here only carries the pub/sub messages between consumers -
+# ROOMS (the live simulation state) still lives in one process's memory.
+# See the docstring at the top of player/consumers.py before scaling to
+# multiple worker processes.
+
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -123,6 +153,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# --- DRF / JWT auth ---
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
 
 
 # Internationalization

@@ -303,6 +303,38 @@ export default function Home() {
     const introLogoScale = useMotionValue(1);
     const introLogoOpacity = useMotionValue(1);
 
+    // ================== COUNTDOWN TIMER ==================
+    const [timeLeft, setTimeLeft] = useState({
+        days: 0,
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+    });
+
+    useEffect(() => {
+        // Target: 30th September 2026, 6pm IST (+05:30)
+        const targetDate = new Date("2026-09-30T18:00:00+05:30").getTime();
+
+        const timerInterval = setInterval(() => {
+            const now = new Date().getTime();
+            const difference = targetDate - now;
+
+            if (difference > 0) {
+                setTimeLeft({
+                    days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+                    hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+                    minutes: Math.floor((difference / 1000 / 60) % 60),
+                    seconds: Math.floor((difference / 1000) % 60),
+                });
+            } else {
+                setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+                clearInterval(timerInterval);
+            }
+        }, 1000);
+
+        return () => clearInterval(timerInterval);
+    }, []);
+
     useEffect(() => {
         // Lock scrolling during intro
         document.body.style.overflow = "hidden";
@@ -864,6 +896,50 @@ export default function Home() {
                             willChange: "opacity, transform",
                         }}
                     >
+                        {/* COUNTDOWN TIMER COMPONENT */}
+                        <div
+                            className="mb-8 bg-indigo-900/30 border border-indigo-500/30 p-4 rounded-xl backdrop-blur-md inline-block w-full shadow-lg"
+                            style={{ pointerEvents: "auto" }}
+                        >
+                            <h2 className="text-xl md:text-2xl font-bold text-indigo-300 mb-3 uppercase tracking-widest text-center md:text-left">
+                                Time Left Till Fresher's Orientation!
+                            </h2>
+                            <div className="flex gap-4 justify-center md:justify-start text-center">
+                                <div className="flex flex-col bg-black/40 rounded-lg p-2 w-16 md:w-20 border border-white/5">
+                                    <span className="text-2xl md:text-3xl font-mono font-bold text-white">
+                                        {timeLeft.days}
+                                    </span>
+                                    <span className="text-[10px] md:text-xs text-indigo-200 uppercase tracking-wider mt-1">
+                                        Days
+                                    </span>
+                                </div>
+                                <div className="flex flex-col bg-black/40 rounded-lg p-2 w-16 md:w-20 border border-white/5">
+                                    <span className="text-2xl md:text-3xl font-mono font-bold text-white">
+                                        {timeLeft.hours}
+                                    </span>
+                                    <span className="text-[10px] md:text-xs text-indigo-200 uppercase tracking-wider mt-1">
+                                        Hours
+                                    </span>
+                                </div>
+                                <div className="flex flex-col bg-black/40 rounded-lg p-2 w-16 md:w-20 border border-white/5">
+                                    <span className="text-2xl md:text-3xl font-mono font-bold text-white">
+                                        {timeLeft.minutes}
+                                    </span>
+                                    <span className="text-[10px] md:text-xs text-indigo-200 uppercase tracking-wider mt-1">
+                                        Mins
+                                    </span>
+                                </div>
+                                <div className="flex flex-col bg-black/40 rounded-lg p-2 w-16 md:w-20 border border-white/5">
+                                    <span className="text-2xl md:text-3xl font-mono font-bold text-white">
+                                        {timeLeft.seconds}
+                                    </span>
+                                    <span className="text-[10px] md:text-xs text-indigo-200 uppercase tracking-wider mt-1">
+                                        Secs
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
                         <h1
                             className={`${isMobile ? "text-5xl sm:text-6xl" : "text-lg sm:text-3xl md:text-4xl lg:text-5xl"} font-black leading-tight mb-4 md:mb-6 bg-clip-text text-transparent bg-gradient-to-r from-white via-indigo-200 to-indigo-500`}
                             style={{ pointerEvents: "auto" }}
@@ -1126,7 +1202,9 @@ export default function Home() {
                 onPointerCancel={handlePointerUp}
             >
                 <div className="flex flex-col">
-                    <h1 className="trail-title">Past Year Coordi Memories</h1>
+                    <h1 className="trail-title">
+                        Past Year Organiser Memories
+                    </h1>
                     <p style={{ pointerEvents: "none" }}>
                         Hover with cursor over the screen or hold & press the
                         screen on mobile to experience Techfest highlights

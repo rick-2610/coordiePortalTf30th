@@ -367,7 +367,7 @@ export default function App() {
 
         try {
             const response = await fetch(
-                "https://coordi.techfest.org/player/create_coordi/",
+                "https://freshie.techfest.org/player/create_coordi/",
                 {
                     method: "POST",
                     headers: {
@@ -544,7 +544,7 @@ export default function App() {
                                 >
                                     <div className="form-header">
                                         <h1 className="form-title">
-                                            Coordinator Registration
+                                            Organiser Registration
                                         </h1>
                                     </div>
 

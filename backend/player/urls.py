@@ -1,5 +1,7 @@
 from django.urls import path
 from .views import *
+from . import views
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 
 urlpatterns = [
@@ -13,4 +15,11 @@ urlpatterns = [
     path('export/coordinators/csv/', export_coordinators_csv, name='export_coordinators_csv'),
 
     path('create_coordi/', create_coordinator, name='create_coordinator'),
+
+    path('auth/register/', views.RegisterView.as_view()),
+    path('auth/token/', TokenObtainPairView.as_view()),
+    path('auth/token/refresh/', TokenRefreshView.as_view()),
+    path('lobby/create/', views.create_lobby),
+    path('lobby/join/', views.join_lobby),
+    path('lobby/<str:code>/', views.lobby_detail),
 ]

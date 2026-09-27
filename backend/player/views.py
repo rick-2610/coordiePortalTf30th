@@ -226,3 +226,62 @@ def export_coordinators_csv(request):
         ])
 
     return response
+
+
+from django.contrib.auth.models import User
+from rest_framework import generics, permissions, status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
+
+from .models import Lobby, LobbySeat
+from .serializers import LobbySerializer, RegisterSerializer
+
+
+class RegisterView(generics.CreateAPIView):
+    """POST {username, password} -> 201 + user, or 400 with a clear 'username
+    taken' error. Uniqueness is enforced in RegisterSerializer.validate_username."""
+    queryset = User.objects.all()
+    serializer_class = RegisterSerializer
+    permission_classes = [permissions.AllowAny]
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def create_lobby(request):
+    lobby = Lobby.objects.create(host=request.user)
+    LobbySeat.objects.create(lobby=lobby, seat_index=0, user=request.user)
+    return Response(LobbySerializer(lobby).data, status=status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+@permission_classes([permissions.IsAuthenticated])
+def join_lobby(request):
+    code = (request.data.get('code') or '').upper().strip()
+    try:
+        lobby = Lobby.objects.get(code=code)
+    except Lobby.DoesNotExist:
+        return Response({'detail': 'Lobby not found.'}, status=404)
+    if lobby.status != 'waiting':
+        return Response({'detail': 'That game has already started.'}, status=400)
+
+    existing = LobbySeat.objects.filter(lobby=lobby, user=request.user).first()
+    if existing:
+        return Response(LobbySerializer(lobby).data)
+
+    taken = set(lobby.seats.values_list('seat_index', flat=True))
+    free = next((i for i in range(lobby.max_players) if i not in taken), None)
+    if free is None:
+        return Response({'detail': 'Lobby is full.'}, status=400)
+
+    LobbySeat.objects.create(lobby=lobby, seat_index=free, user=request.user)
+    return Response(LobbySerializer(lobby).data)
+
+
+@api_view(['GET'])
+@permission_classes([permissions.IsAuthenticated])
+def lobby_detail(request, code):
+    try:
+        lobby = Lobby.objects.get(code=code.upper())
+    except Lobby.DoesNotExist:
+        return Response({'detail': 'Lobby not found.'}, status=404)
+    return Response(LobbySerializer(lobby).data)
